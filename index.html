@@ -85,21 +85,79 @@
     </div>
 
     <div id="user-page" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-blue-500">
-                <div class="text-xs text-gray-500 uppercase">Total Saham</div>
-                <div class="text-2xl font-bold text-gray-800" id="total-saham">0</div>
-            </div>
-            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-teal-500">
-                <div class="text-xs text-gray-500 uppercase">Market Breadth (D1)</div>
-                <div class="text-lg font-bold text-gray-800">
-                    <span class="text-green-600" id="breadth-green">0</span> <span class="text-gray-400">/</span> <span
-                        class="text-red-600" id="breadth-red">0</span>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Total Saham Card -->
+            <div
+                class="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 relative overflow-hidden group">
+                <div class="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-blue-400 to-blue-600"></div>
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Saham</p>
+                        <h3 class="text-3xl font-extrabold text-gray-800" id="total-saham">0</h3>
+                    </div>
+                    <div class="p-2 bg-blue-50 rounded-lg text-blue-600 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4">
+                            </path>
+                        </svg>
+                    </div>
                 </div>
             </div>
-            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-yellow-500">
-                <div class="text-xs text-gray-500 uppercase">Top Gainer (D1)</div>
-                <div class="text-xl font-bold text-yellow-600 truncate" id="top-gainer">-</div>
+
+            <!-- Market Breadth Card -->
+            <div
+                class="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 relative overflow-hidden group">
+                <div class="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-teal-400 to-teal-600"></div>
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Market Breadth (D1)</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-2xl font-bold text-green-600 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                        d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                                </svg>
+                                <span id="breadth-green">0</span>
+                            </span>
+                            <span class="text-gray-300 text-xl">/</span>
+                            <span class="text-2xl font-bold text-red-600 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                        d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                </svg>
+                                <span id="breadth-red">0</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-2 bg-teal-50 rounded-lg text-teal-600 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top UW Streak Card -->
+            <div
+                class="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 relative overflow-hidden group">
+                <div class="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-purple-400 to-purple-600"></div>
+                <div class="flex justify-between items-start">
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Top UW (7-Day Streak)
+                        </p>
+                        <div class="text-2xl font-extrabold text-purple-700 truncate" id="top-uw-streak">-</div>
+                    </div>
+                    <div
+                        class="p-2 bg-purple-50 rounded-lg text-purple-600 group-hover:scale-110 transition-transform flex-shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -110,17 +168,43 @@
             </button>
         </div>
 
-        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="bg-white shadow-sm rounded-xl overflow-hidden mb-8 border border-gray-100">
             <div
-                class="px-6 py-4 border-b border-gray-200 flex flex-col md:flex-row justify-between md:items-center gap-4">
-                <h3 class="text-lg font-bold text-gray-800">Track Record Saham IPO (Database)</h3>
-                <div class="flex gap-2 w-full md:w-auto">
-                    <input type="text" id="searchBox" onkeyup="renderTable()" placeholder="Cari Kode..."
-                        class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-48">
-                    <select id="uwFilter" onchange="renderTable()"
-                        class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-32 bg-white">
-                        <option value="">All UW</option>
-                    </select>
+                class="px-6 py-5 border-b border-gray-100 flex flex-col md:flex-row justify-between md:items-center gap-4 bg-gray-50/50">
+                <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                    Track Record Saham IPO
+                </h3>
+                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <!-- Search Input -->
+                    <div class="relative w-full md:w-64">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <input type="text" id="searchBox" onkeyup="renderTable()" placeholder="Cari Kode Saham..."
+                            class="pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full transition-shadow shadow-sm">
+                    </div>
+
+                    <!-- UW Dropdown -->
+                    <div class="relative w-full md:w-48">
+                        <select id="uwFilter" onchange="renderTable()"
+                            class="appearance-none pl-4 pr-10 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full bg-white transition-shadow shadow-sm cursor-pointer">
+                            <option value="">Semua Underwriter</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="overflow-x-auto">
@@ -240,18 +324,41 @@
         </div>
     </div>
 
-    <div id="top-uw-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
-            <div class="bg-purple-600 px-6 py-4 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-white">🏆 Top UW (Avg WR 3 Hari > 80%)</h3>
-                <button onclick="closeTopUWModal()" class="text-white hover:text-gray-200">✕</button>
-            </div>
-            <div class="p-4 bg-gray-50">
-                <div id="modal-top-uw-list" class="overflow-y-auto max-h-[60vh] space-y-2"></div>
-            </div>
-            <div class="bg-gray-100 px-6 py-3 flex justify-end">
+    <div id="top-uw-modal"
+        class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 backdrop-blur-sm transition-opacity">
+        <div
+            class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden transform transition-all scale-100">
+            <div
+                class="bg-gradient-to-r from-purple-700 to-indigo-800 px-6 py-4 flex justify-between items-center shadow-md">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <span>🏆</span> Top Underwriters Leaderboard
+                </h3>
                 <button onclick="closeTopUWModal()"
-                    class="px-4 py-2 bg-gray-300 rounded text-sm font-bold">Tutup</button>
+                    class="text-white hover:text-gray-200 transition transform hover:scale-110">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-5 bg-gray-50">
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 mb-4 rounded-r shadow-sm flex items-start gap-3">
+                    <svg class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                        <p class="text-sm font-bold text-blue-800">Kriteria Seleksi:</p>
+                        <p class="text-xs text-blue-700 mt-1">Menampilkan Underwriter dengan <span class="font-bold">Win
+                                Rate 80% - 100%</span> (Rata-rata 3 Hari Pertama Listing).</p>
+                    </div>
+                </div>
+                <div id="modal-top-uw-list" class="overflow-y-auto max-h-[60vh] space-y-3 pr-1"></div>
+            </div>
+            <div class="bg-gray-100 px-6 py-4 flex justify-end border-t border-gray-200">
+                <button onclick="closeTopUWModal()"
+                    class="px-5 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-semibold shadow-sm transition">Tutup</button>
             </div>
         </div>
     </div>
@@ -428,7 +535,7 @@
             const uwSelect = document.getElementById('uwFilter');
             const currentVal = uwSelect.value;
             const uws = [...new Set(stocks.map(s => s.uw).filter(uw => uw && uw !== "-"))].sort();
-            uwSelect.innerHTML = '<option value="">All UW</option>';
+            uwSelect.innerHTML = '<option value="">Semua Underwriter</option>';
             uws.forEach(uw => {
                 const option = document.createElement('option');
                 option.value = uw;
@@ -473,13 +580,20 @@
             });
 
             // Variables for Stats
-            let count = 0, wins1 = 0, losses = 0, maxD1 = -9999, topCode = "-";
+            let count = 0, wins1 = 0, losses = 0;
+            let streakCandidates = []; // Stores UWs with 7-day streak stocks
 
             filteredStocks.forEach(stock => {
                 count++;
                 if (stock.d1 > 0) wins1++;
                 if (stock.d1 < 0) losses++;
-                if (stock.d1 > maxD1) { maxD1 = stock.d1; topCode = stock.code; }
+
+                // Check 7-Day Streak
+                if (stock.d1 > 0 && stock.d2 > 0 && stock.d3 > 0 && stock.d4 > 0 && stock.d5 > 0 && stock.d6 > 0 && stock.d7 > 0) {
+                    if (stock.uw && stock.uw !== "-") {
+                        streakCandidates.push(stock.uw);
+                    }
+                }
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-gray-50 border-b border-gray-100">
@@ -512,12 +626,32 @@
             document.getElementById('breadth-green').innerText = wins1;
             document.getElementById('breadth-red').innerText = losses;
 
-            const gainerEl = document.getElementById('top-gainer');
-            if (count > 0) {
-                gainerEl.innerText = `${topCode} (${maxD1}%)`;
-                gainerEl.className = "text-xl font-bold truncate " + getColorClass(maxD1);
+            const streakEl = document.getElementById('top-uw-streak');
+            if (streakCandidates.length > 0) {
+                // Find best UW among candidates based on 3-Day Avg WR
+                let bestUW = null;
+                let bestAvgWR = -1;
+
+                streakCandidates.forEach(uw => {
+                    const s = uwGlobalStats[uw];
+                    if (s) {
+                        const avg = ((s.w1 / s.count) + (s.w2 / s.count) + (s.w3 / s.count)) / 3 * 100;
+                        if (avg > bestAvgWR) {
+                            bestAvgWR = avg;
+                            bestUW = uw;
+                        }
+                    }
+                });
+
+                if (bestUW) {
+                    streakEl.innerHTML = `
+                        ${bestUW} <span class="text-sm font-normal text-gray-600 block">Avg WR: ${bestAvgWR.toFixed(0)}%</span>
+                    `;
+                } else {
+                    streakEl.innerText = "-";
+                }
             } else {
-                gainerEl.innerText = "-";
+                streakEl.innerText = "-";
             }
         }
 
@@ -582,18 +716,42 @@
             if (topList.length === 0) listEl.innerHTML = '<p class="text-center text-gray-500">Tidak ada data</p>';
 
             topList.forEach((item, i) => {
+                const rank = i + 1;
+                let rankBadge = `<span class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold text-sm shadow-inner">#${rank}</span>`;
+                let borderClass = "border-l-4 border-gray-300";
+
+                if (rank === 1) {
+                    rankBadge = `<span class="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100 text-yellow-700 font-bold text-sm shadow-inner border border-yellow-300">🥇</span>`;
+                    borderClass = "border-l-4 border-yellow-400";
+                } else if (rank === 2) {
+                    rankBadge = `<span class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-600 font-bold text-sm shadow-inner border border-gray-300">🥈</span>`;
+                    borderClass = "border-l-4 border-gray-400";
+                } else if (rank === 3) {
+                    rankBadge = `<span class="flex items-center justify-center w-8 h-8 rounded-full bg-orange-100 text-orange-700 font-bold text-sm shadow-inner border border-orange-300">🥉</span>`;
+                    borderClass = "border-l-4 border-orange-400";
+                }
+
                 listEl.innerHTML += `
-                    <div class="flex items-center justify-between p-3 bg-white rounded border border-gray-200">
-                        <div class="flex items-center gap-3">
-                            <span class="font-bold text-gray-400">#${i + 1}</span>
+                    <div class="bg-white rounded-lg shadow-sm p-4 flex items-center justify-between hover:shadow-md transition-shadow ${borderClass}">
+                        <div class="flex items-center gap-4">
+                            <div class="flex-shrink-0">${rankBadge}</div>
                             <div>
-                                <div class="font-bold text-gray-800">${item.uw}</div>
-                                <div class="text-xs text-gray-500">${item.count} Emiten</div>
+                                <div class="text-lg font-bold text-gray-800 leading-none">${item.uw}</div>
+                                <div class="text-xs text-gray-500 mt-1 font-medium bg-gray-100 px-2 py-0.5 rounded-full inline-block">${item.count} Emiten</div>
                             </div>
                         </div>
                         <div class="text-right">
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold">${item.avg.toFixed(0)}%</span>
-                            <div class="text-[10px] text-gray-400 mt-1">Avg Win Rate 3 Days</div>
+                            <div class="flex flex-col items-end">
+                                <span class="bg-green-600 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-sm mb-1">${item.avg.toFixed(0)}%</span>
+                                <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Avg 3 Days</span>
+                            </div>
+                            <div class="mt-2 flex gap-2 text-[10px] text-gray-500 font-mono">
+                                <span title="Day 1 Win Rate">D1:${item.wr1.toFixed(0)}%</span>
+                                <span class="text-gray-300">|</span>
+                                <span title="Day 2 Win Rate">D2:${item.wr2.toFixed(0)}%</span>
+                                <span class="text-gray-300">|</span>
+                                <span title="Day 3 Win Rate">D3:${item.wr3.toFixed(0)}%</span>
+                            </div>
                         </div>
                     </div>
                 `;
