@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDX Underwriter Track Record</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .idx-green {
+            color: #00A86B;
+            font-weight: bold;
+        }
+
+        .idx-red {
+            color: #E53935;
+            font-weight: bold;
+        }
+
+        .idx-yellow {
+            color: #D4A017;
+            font-weight: bold;
+        }
+
+        .bg-idx-dark {
+            background-color: #131722;
+        }
+
+        /* Loading Spinner */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 30px;
+            height: 30px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="bg-idx-dark text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold tracking-wider text-green-500">IPO<span
+                            class="text-white">HUNTER</span></span>
+                </div>
+                <div class="flex space-x-3">
+                    <button onclick="showPage('user')"
+                        class="px-4 py-2 rounded text-sm font-semibold bg-gray-700 hover:bg-gray-600 transition">Dashboard</button>
+                    <button onclick="showPage('admin')"
+                        class="px-4 py-2 rounded text-sm font-semibold bg-blue-600 hover:bg-blue-500 transition">Admin
+                        Panel</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="loading-overlay"
+        class="fixed inset-0 bg-white bg-opacity-80 z-[60] flex items-center justify-center hidden">
+        <div class="text-center">
+            <div class="loader mx-auto mb-2"></div>
+            <p class="text-gray-600 text-sm font-semibold">Mengambil Data Database...</p>
+        </div>
+    </div>
+
+    <div id="user-page" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-blue-500">
+                <div class="text-xs text-gray-500 uppercase">Total Saham</div>
+                <div class="text-2xl font-bold text-gray-800" id="total-saham">0</div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-teal-500">
+                <div class="text-xs text-gray-500 uppercase">Market Breadth (D1)</div>
+                <div class="text-lg font-bold text-gray-800">
+                    <span class="text-green-600" id="breadth-green">0</span> <span class="text-gray-400">/</span> <span
+                        class="text-red-600" id="breadth-red">0</span>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-yellow-500">
+                <div class="text-xs text-gray-500 uppercase">Top Gainer (D1)</div>
+                <div class="text-xl font-bold text-yellow-600 truncate" id="top-gainer">-</div>
+            </div>
+        </div>
+
+        <div class="mb-6 flex justify-end">
+            <button onclick="openTopUWModal()"
+                class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded shadow flex items-center gap-2 transition">
+                <span>🏆</span> Lihat Top Underwriter Leaderboard
+            </button>
+        </div>
+
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div
+                class="px-6 py-4 border-b border-gray-200 flex flex-col md:flex-row justify-between md:items-center gap-4">
+                <h3 class="text-lg font-bold text-gray-800">Track Record Saham IPO (Database)</h3>
+                <div class="flex gap-2 w-full md:w-auto">
+                    <input type="text" id="searchBox" onkeyup="renderTable()" placeholder="Cari Kode..."
+                        class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-48">
+                    <select id="uwFilter" onchange="renderTable()"
+                        class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-32 bg-white">
+                        <option value="">All UW</option>
+                    </select>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Kode</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tgl
+                                Listing</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">UW
+                            </th>
+                            <th
+                                class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider bg-gray-100">
+                                D1</th>
+                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                D2</th>
+                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                D3</th>
+                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                D4</th>
+                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                D5</th>
+                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                D6</th>
+                            <th
+                                class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider bg-gray-50">
+                                D7</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="bg-white divide-y divide-gray-200 text-sm"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-page" class="hidden max-w-6xl mx-auto px-4 py-8">
+        <div class="bg-white shadow rounded-lg p-6 mb-8 border-t-4 border-blue-600">
+            <h2 class="text-xl font-bold mb-4 text-gray-800 flex justify-between items-center">
+                <span id="form-title">Input Data Baru (Database)</span>
+                <button onclick="cancelEdit()" id="btn-cancel"
+                    class="hidden text-sm text-red-600 hover:text-red-800 underline">Batal Edit</button>
+            </h2>
+            <form id="inputForm" class="space-y-4">
+                <input type="hidden" id="edit-id" value="">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Kode Saham</label>
+                        <input type="text" id="code" class="w-full border rounded p-2 focus:ring-2 focus:ring-blue-500"
+                            placeholder="CODE" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Listing Date</label>
+                        <input type="date" id="date" class="w-full border rounded p-2 focus:ring-2 focus:ring-blue-500"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Underwriter</label>
+                        <input type="text" id="uw" class="w-full border rounded p-2 focus:ring-2 focus:ring-blue-500"
+                            placeholder="Ex: YJ" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Free Float (%)</label>
+                        <input type="number" id="float"
+                            class="w-full border rounded p-2 focus:ring-2 focus:ring-blue-500" placeholder="20"
+                            required>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded border">
+                    <p class="text-xs font-bold text-gray-500 uppercase mb-3">Persentase Kenaikan (Gunakan minus untuk
+                        turun)</p>
+                    <div class="grid grid-cols-4 md:grid-cols-7 gap-2">
+                        <input type="number" step="0.01" id="d1" placeholder="D1 %"
+                            class="border p-2 rounded text-center w-full">
+                        <input type="number" step="0.01" id="d2" placeholder="D2 %"
+                            class="border p-2 rounded text-center w-full">
+                        <input type="number" step="0.01" id="d3" placeholder="D3 %"
+                            class="border p-2 rounded text-center w-full">
+                        <input type="number" step="0.01" id="d4" placeholder="D4 %"
+                            class="border p-2 rounded text-center w-full">
+                        <input type="number" step="0.01" id="d5" placeholder="D5 %"
+                            class="border p-2 rounded text-center w-full">
+                        <input type="number" step="0.01" id="d6" placeholder="D6 %"
+                            class="border p-2 rounded text-center w-full">
+                        <input type="number" step="0.01" id="d7" placeholder="D7 %"
+                            class="border p-2 rounded text-center w-full">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-4">
+                    <button type="submit" id="btn-submit"
+                        class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-semibold shadow">Simpan
+                        ke Database</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-gray-700">Manajemen Data</h3>
+                <button onclick="refreshData()" class="text-sm text-blue-600 hover:underline">Refresh Data</button>
+            </div>
+            <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-100 sticky top-0">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Kode</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">UW</th>
+                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase">H1 %</th>
+                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-table-body" class="bg-white divide-y divide-gray-200 text-sm"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="top-uw-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div class="bg-purple-600 px-6 py-4 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white">🏆 Top UW (Avg WR 3 Hari > 80%)</h3>
+                <button onclick="closeTopUWModal()" class="text-white hover:text-gray-200">✕</button>
+            </div>
+            <div class="p-4 bg-gray-50">
+                <div id="modal-top-uw-list" class="overflow-y-auto max-h-[60vh] space-y-2"></div>
+            </div>
+            <div class="bg-gray-100 px-6 py-3 flex justify-end">
+                <button onclick="closeTopUWModal()"
+                    class="px-4 py-2 bg-gray-300 rounded text-sm font-bold">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // KONFIGURASI SUPABASE - GANTI INI!
+        // ==========================================
+        const SUPABASE_URL = 'https://rqgkkrodzqfillmrdikj.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxZ2trcm9kenFmaWxsbXJkaWtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNjUyNDEsImV4cCI6MjA3OTc0MTI0MX0.n4Pdzs45pHgLzSfwSvDk3rtbXmRjjk2DhE18HcXrzRk';
+
+        // Inisialisasi Client
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // ==========================================
+
+        let stocks = []; // Array lokal penampung data database
+
+        // --- FUNGSI UTAMA LOAD DATA ---
+        async function refreshData() {
+            document.getElementById('loading-overlay').classList.remove('hidden');
+
+            // Ambil data dari tabel 'stocks' di Supabase
+            const { data, error } = await supabase
+                .from('stocks')
+                .select('*')
+                .order('date', { ascending: false }); // Urutkan dari tanggal terbaru
+
+            document.getElementById('loading-overlay').classList.add('hidden');
+
+            if (error) {
+                console.error("Error fetching data:", error);
+                alert("Gagal mengambil data dari database. Cek console log.");
+                return;
+            }
+
+            if (data) {
+                stocks = data;
+                populateUWFilter();
+                renderTable();
+                renderAdminTable();
+            }
+        }
+
+        // --- FUNGSI CRUD (DATABASE) ---
+
+        // 1. CREATE / UPDATE
+        document.getElementById('inputForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit');
+            btn.innerText = "Menyimpan...";
+            btn.disabled = true;
+
+            const id = document.getElementById('edit-id').value;
+            const stockData = {
+                code: document.getElementById('code').value.toUpperCase(),
+                date: document.getElementById('date').value,
+                uw: document.getElementById('uw').value.toUpperCase(),
+                float: parseFloat(document.getElementById('float').value) || 0,
+                d1: parseFloat(document.getElementById('d1').value) || 0,
+                d2: parseFloat(document.getElementById('d2').value) || 0,
+                d3: parseFloat(document.getElementById('d3').value) || 0,
+                d4: parseFloat(document.getElementById('d4').value) || 0,
+                d5: parseFloat(document.getElementById('d5').value) || 0,
+                d6: parseFloat(document.getElementById('d6').value) || 0,
+                d7: parseFloat(document.getElementById('d7').value) || 0,
+            };
+
+            let error;
+            if (id) {
+                // Update Existing
+                const { err } = await supabase.from('stocks').update(stockData).eq('id', id);
+                error = err;
+            } else {
+                // Insert New
+                const { err } = await supabase.from('stocks').insert([stockData]);
+                error = err;
+            }
+
+            btn.innerText = "Simpan ke Database";
+            btn.disabled = false;
+
+            if (error) {
+                alert("Gagal menyimpan: " + error.message);
+            } else {
+                alert("Data berhasil disimpan ke Cloud Database!");
+                cancelEdit();
+                refreshData(); // Tarik data terbaru
+            }
+        });
+
+        // 2. DELETE
+        async function deleteStock(id) {
+            if (confirm(`Yakin ingin menghapus data ini dari Database Permanen?`)) {
+                const { error } = await supabase.from('stocks').delete().eq('id', id);
+                if (error) {
+                    alert("Gagal menghapus: " + error.message);
+                } else {
+                    refreshData();
+                }
+            }
+        }
+
+        // 3. PREPARE EDIT
+        function editStock(index) {
+            const stock = stocks[index]; // Ambil dari array lokal
+
+            document.getElementById('edit-id').value = stock.id; // Simpan ID database
+            document.getElementById('code').value = stock.code;
+            document.getElementById('date').value = stock.date;
+            document.getElementById('uw').value = stock.uw;
+            document.getElementById('float').value = stock.float;
+            document.getElementById('d1').value = stock.d1;
+            document.getElementById('d2').value = stock.d2;
+            document.getElementById('d3').value = stock.d3;
+            document.getElementById('d4').value = stock.d4;
+            document.getElementById('d5').value = stock.d5;
+            document.getElementById('d6').value = stock.d6;
+            document.getElementById('d7').value = stock.d7;
+
+            // UI Changes
+            document.getElementById('form-title').innerText = "Edit Data Database: " + stock.code;
+            document.getElementById('btn-submit').innerText = "Update Data";
+            document.getElementById('btn-submit').classList.remove('bg-blue-600');
+            document.getElementById('btn-submit').classList.add('bg-green-600');
+            document.getElementById('btn-cancel').classList.remove('hidden');
+
+            document.getElementById('admin-page').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelEdit() {
+            document.getElementById('inputForm').reset();
+            document.getElementById('edit-id').value = "";
+            document.getElementById('form-title').innerText = "Input Data Baru (Database)";
+            document.getElementById('btn-submit').innerText = "Simpan ke Database";
+            document.getElementById('btn-submit').classList.add('bg-blue-600');
+            document.getElementById('btn-submit').classList.remove('bg-green-600');
+            document.getElementById('btn-cancel').classList.add('hidden');
+        }
+
+        // --- VISUALIZATION & HELPER FUNCTIONS ---
+
+        function showPage(pageId) {
+            document.getElementById('user-page').classList.add('hidden');
+            document.getElementById('admin-page').classList.add('hidden');
+            document.getElementById(pageId + '-page').classList.remove('hidden');
+            if (pageId === 'user') renderTable();
+            if (pageId === 'admin') renderAdminTable();
+        }
+
+        function getColorClass(value) {
+            const num = parseFloat(value);
+            if (isNaN(num)) return 'text-gray-400';
+            if (num > 0) return 'text-green-600 font-bold';
+            if (num < 0) return 'text-red-600 font-bold';
+            return 'text-yellow-600 font-bold';
+        }
+
+        function formatPercent(value) {
+            const num = parseFloat(value);
+            if (isNaN(num)) return "-";
+            return (num > 0 ? "+" : "") + num + "%";
+        }
+
+        function populateUWFilter() {
+            const uwSelect = document.getElementById('uwFilter');
+            const currentVal = uwSelect.value;
+            const uws = [...new Set(stocks.map(s => s.uw).filter(uw => uw && uw !== "-"))].sort();
+            uwSelect.innerHTML = '<option value="">All UW</option>';
+            uws.forEach(uw => {
+                const option = document.createElement('option');
+                option.value = uw;
+                option.innerText = uw;
+                uwSelect.appendChild(option);
+            });
+            if (uws.includes(currentVal)) uwSelect.value = currentVal;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('table-body');
+            const search = document.getElementById('searchBox').value.toLowerCase();
+            const uwFilter = document.getElementById('uwFilter').value;
+            tbody.innerHTML = '';
+
+            // Hitung Statistik UW Global untuk warna badge
+            const uwGlobalStats = {};
+            stocks.forEach(s => {
+                if (s.uw && s.uw !== "-") {
+                    if (!uwGlobalStats[s.uw]) uwGlobalStats[s.uw] = { count: 0, w1: 0, w2: 0, w3: 0 };
+                    uwGlobalStats[s.uw].count++;
+                    if (s.d1 > 0) uwGlobalStats[s.uw].w1++;
+                    if (s.d2 > 0) uwGlobalStats[s.uw].w2++;
+                    if (s.d3 > 0) uwGlobalStats[s.uw].w3++;
+                }
+            });
+
+            function getUWBadgeClass(uw) {
+                if (!uwGlobalStats[uw]) return "bg-gray-200 text-gray-700";
+                const s = uwGlobalStats[uw];
+                const avgWr = ((s.w1 / s.count) + (s.w2 / s.count) + (s.w3 / s.count)) / 3 * 100;
+                if (avgWr >= 90) return "bg-green-600 text-white";
+                if (avgWr >= 80) return "bg-green-100 text-green-800";
+                return "bg-red-100 text-red-800";
+            }
+
+            // Filter Data
+            const filteredStocks = stocks.filter(s => {
+                const matchCode = s.code && s.code.toLowerCase().includes(search);
+                const matchUW = uwFilter === "" || s.uw === uwFilter;
+                return matchCode && matchUW;
+            });
+
+            // Variables for Stats
+            let count = 0, wins1 = 0, losses = 0, maxD1 = -9999, topCode = "-";
+
+            filteredStocks.forEach(stock => {
+                count++;
+                if (stock.d1 > 0) wins1++;
+                if (stock.d1 < 0) losses++;
+                if (stock.d1 > maxD1) { maxD1 = stock.d1; topCode = stock.code; }
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50 border-b border-gray-100">
+                        <td class="px-6 py-4 font-bold text-gray-900">${stock.code}</td>
+                        <td class="px-6 py-4 text-xs text-gray-500">${stock.date}</td>
+                        <td class="px-6 py-4"><span class="px-2 py-1 text-xs font-semibold rounded ${getUWBadgeClass(stock.uw)}">${stock.uw}</span></td>
+                        <td class="px-6 py-4 text-center bg-gray-50/50 ${getColorClass(stock.d1)}">${formatPercent(stock.d1)}</td>
+                        <td class="px-6 py-4 text-center ${getColorClass(stock.d2)}">${formatPercent(stock.d2)}</td>
+                        <td class="px-6 py-4 text-center ${getColorClass(stock.d3)}">${formatPercent(stock.d3)}</td>
+                        <td class="px-6 py-4 text-center ${getColorClass(stock.d4)}">${formatPercent(stock.d4)}</td>
+                        <td class="px-6 py-4 text-center ${getColorClass(stock.d5)}">${formatPercent(stock.d5)}</td>
+                        <td class="px-6 py-4 text-center ${getColorClass(stock.d6)}">${formatPercent(stock.d6)}</td>
+                        <td class="px-6 py-4 text-center bg-gray-50/50 ${getColorClass(stock.d7)}">${formatPercent(stock.d7)}</td>
+                    </tr>
+                `;
+            });
+
+            if (count === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="px-6 py-8 text-center text-gray-500 italic">
+                            Data tidak ditemukan.
+                        </td>
+                    </tr>
+                `;
+            }
+
+            // Update DOM Stats
+            document.getElementById('total-saham').innerText = count;
+            document.getElementById('breadth-green').innerText = wins1;
+            document.getElementById('breadth-red').innerText = losses;
+
+            const gainerEl = document.getElementById('top-gainer');
+            if (count > 0) {
+                gainerEl.innerText = `${topCode} (${maxD1}%)`;
+                gainerEl.className = "text-xl font-bold truncate " + getColorClass(maxD1);
+            } else {
+                gainerEl.innerText = "-";
+            }
+        }
+
+        function renderAdminTable() {
+            const tbody = document.getElementById('admin-table-body');
+            tbody.innerHTML = '';
+            stocks.forEach((stock, index) => {
+                // Pass Database ID instead of Index later? No, easier to use Index to get object, then use ID for query.
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50 border-b">
+                        <td class="px-6 py-3 font-bold text-gray-800">${stock.code}</td>
+                        <td class="px-6 py-3 text-gray-600">${stock.uw}</td>
+                        <td class="px-6 py-3 text-center ${getColorClass(stock.d1)}">${formatPercent(stock.d1)}</td>
+                        <td class="px-6 py-3 text-center space-x-2">
+                            <button onclick="editStock(${index})" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded text-xs font-bold shadow">Edit</button>
+                            <button onclick="deleteStock(${stock.id})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-bold shadow">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            if (stocks.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="px-6 py-8 text-center text-gray-500 italic">
+                            Belum ada data saham. Silakan input data baru.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // --- TOP UW MODAL ---
+        function openTopUWModal() {
+            document.getElementById('top-uw-modal').classList.remove('hidden');
+            document.getElementById('top-uw-modal').classList.add('flex');
+
+            // Calculate Top UW
+            let uwStats = {};
+            stocks.forEach(s => {
+                if (s.uw && s.uw !== "-") {
+                    if (!uwStats[s.uw]) uwStats[s.uw] = { count: 0, w1: 0, w2: 0, w3: 0 };
+                    uwStats[s.uw].count++;
+                    if (s.d1 > 0) uwStats[s.uw].w1++;
+                    if (s.d2 > 0) uwStats[s.uw].w2++;
+                    if (s.d3 > 0) uwStats[s.uw].w3++;
+                }
+            });
+
+            let topList = [];
+            for (let [uw, s] of Object.entries(uwStats)) {
+                let wr1 = (s.w1 / s.count) * 100;
+                let wr2 = (s.w2 / s.count) * 100;
+                let wr3 = (s.w3 / s.count) * 100;
+                let avg = (wr1 + wr2 + wr3) / 3;
+                if (avg >= 80) topList.push({ uw, count: s.count, avg, wr1, wr2, wr3 });
+            }
+            topList.sort((a, b) => b.avg - a.avg);
+
+            const listEl = document.getElementById('modal-top-uw-list');
+            listEl.innerHTML = '';
+            if (topList.length === 0) listEl.innerHTML = '<p class="text-center text-gray-500">Tidak ada data</p>';
+
+            topList.forEach((item, i) => {
+                listEl.innerHTML += `
+                    <div class="flex items-center justify-between p-3 bg-white rounded border border-gray-200">
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold text-gray-400">#${i + 1}</span>
+                            <div>
+                                <div class="font-bold text-gray-800">${item.uw}</div>
+                                <div class="text-xs text-gray-500">${item.count} Emiten</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold">${item.avg.toFixed(0)}%</span>
+                            <div class="text-[10px] text-gray-400 mt-1">Avg Win Rate 3 Days</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        function closeTopUWModal() {
+            document.getElementById('top-uw-modal').classList.add('hidden');
+            document.getElementById('top-uw-modal').classList.remove('flex');
+        }
+
+        // LOAD FIRST TIME
+        refreshData();
+
+    </script>
+</body>
+
+</html>
