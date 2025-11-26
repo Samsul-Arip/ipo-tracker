@@ -118,28 +118,29 @@
     </div>
     <nav class="bg-white/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-50 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <div class="flex items-center gap-3">
-                    <div class="bg-gradient-to-br from-blue-600 to-purple-600 text-white p-2.5 rounded-xl shadow-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center justify-between h-16 md:h-20">
+                <div class="flex items-center gap-2 md:gap-3">
+                    <div
+                        class="bg-gradient-to-br from-blue-600 to-purple-600 text-white p-2 md:p-2.5 rounded-xl shadow-lg transform scale-90 md:scale-100">
+                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                         </svg>
                     </div>
                     <div>
                         <span
-                            class="text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 tracking-tight">Stock<span
+                            class="text-xl md:text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 tracking-tight">Stock<span
                                 class="text-blue-600">Insight</span></span>
-                        <p class="text-[10px] text-gray-500 font-medium tracking-widest uppercase">Professional
-                            Analytics</p>
+                        <p
+                            class="text-[8px] md:text-[10px] text-gray-500 font-medium tracking-widest uppercase hidden md:block">
+                            Professional Analytics</p>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 md:space-x-4">
                     <button onclick="showPage('user')"
-                        class="text-gray-600 hover:text-blue-600 px-4 py-2 rounded-lg text-sm font-semibold transition-colors hover:bg-blue-50">Dashboard</button>
+                        class="text-gray-600 hover:text-blue-600 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-semibold transition-colors hover:bg-blue-50">Dashboard</button>
                     <button onclick="showPage('admin')"
-                        class="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">Admin
-                        Panel</button>
+                        class="bg-gray-900 text-white px-3 py-1.5 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">Admin</button>
                 </div>
             </div>
         </div>
@@ -158,16 +159,18 @@
         <!-- Stats Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Total Saham Card -->
-            <div class="bg-glass p-6 rounded-2xl shadow-sm card-hover relative overflow-hidden group">
+            <div class="bg-glass p-5 md:p-6 rounded-2xl shadow-sm card-hover relative overflow-hidden group">
                 <div class="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-blue-400 to-blue-600"></div>
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Total Saham</p>
-                        <div class="text-4xl font-black text-gray-800 tracking-tight" id="total-saham">0</div>
+                        <div class="text-3xl md:text-4xl font-black text-gray-800 tracking-tight" id="total-saham">0
+                        </div>
                         <p class="text-xs text-gray-400 mt-2 font-medium">Terdaftar di Database</p>
                     </div>
-                    <div class="p-3 bg-blue-50 rounded-xl text-blue-600 group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div
+                        class="p-2 md:p-3 bg-blue-50 rounded-xl text-blue-600 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z">
                             </path>
@@ -177,19 +180,19 @@
             </div>
 
             <!-- Market Breadth Card -->
-            <div class="bg-glass p-6 rounded-2xl shadow-sm card-hover relative overflow-hidden group">
+            <div class="bg-glass p-5 md:p-6 rounded-2xl shadow-sm card-hover relative overflow-hidden group">
                 <div class="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-green-400 to-red-500"></div>
                 <div class="flex justify-between items-start">
                     <div class="w-full">
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Market Breadth (H1)</p>
                         <div class="flex items-end gap-4">
                             <div>
-                                <span class="text-3xl font-black text-green-600" id="breadth-green">0</span>
+                                <span class="text-2xl md:text-3xl font-black text-green-600" id="breadth-green">0</span>
                                 <span class="text-xs font-bold text-green-600/70 uppercase ml-1">Naik</span>
                             </div>
-                            <div class="h-8 w-px bg-gray-200"></div>
+                            <div class="h-6 md:h-8 w-px bg-gray-200"></div>
                             <div>
-                                <span class="text-3xl font-black text-red-500" id="breadth-red">0</span>
+                                <span class="text-2xl md:text-3xl font-black text-red-500" id="breadth-red">0</span>
                                 <span class="text-xs font-bold text-red-500/70 uppercase ml-1">Turun</span>
                             </div>
                         </div>
@@ -198,14 +201,14 @@
             </div>
 
             <!-- Top UW Streak Card -->
-            <div class="bg-glass p-6 rounded-2xl shadow-sm card-hover relative overflow-hidden group cursor-pointer"
+            <div class="bg-glass p-5 md:p-6 rounded-2xl shadow-sm card-hover relative overflow-hidden group cursor-pointer"
                 onclick="openTopUWModal()">
                 <div class="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-purple-400 to-purple-600"></div>
                 <div class="flex justify-between items-start">
                     <div class="overflow-hidden">
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Top UW (6-Day Streak)
                         </p>
-                        <div class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600 truncate"
+                        <div class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600 truncate"
                             id="top-uw-streak">-</div>
                         <p class="text-xs text-purple-400 mt-2 font-medium flex items-center gap-1">
                             <span>Klik untuk detail</span>
@@ -216,8 +219,8 @@
                         </p>
                     </div>
                     <div
-                        class="p-3 bg-purple-50 rounded-xl text-purple-600 group-hover:scale-110 transition-transform flex-shrink-0">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="p-2 md:p-3 bg-purple-50 rounded-xl text-purple-600 group-hover:scale-110 transition-transform flex-shrink-0">
+                        <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
@@ -226,11 +229,22 @@
             </div>
         </div>
 
+        <!-- Top UW Section (80-100%) -->
+        <div id="top-uw-section" class="hidden space-y-4">
+            <div class="flex items-center gap-2 px-2">
+                <span class="text-xl">🏆</span>
+                <h3 class="text-lg font-bold text-gray-800">Top Underwriter (Win Rate > 80%)</h3>
+            </div>
+            <div id="top-uw-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Top UW Cards Rendered Here -->
+            </div>
+        </div>
+
         <!-- Main Table Section -->
         <div class="bg-glass rounded-3xl shadow-2xl overflow-hidden border border-white/50">
             <div
-                class="px-8 py-6 border-b border-gray-100/50 flex flex-col md:flex-row justify-between md:items-center gap-4 bg-white/40">
-                <h3 class="text-xl font-bold text-gray-800 flex items-center gap-3">
+                class="px-5 py-5 md:px-8 md:py-6 border-b border-gray-100/50 flex flex-col md:flex-row justify-between md:items-center gap-4 bg-white/40">
+                <h3 class="text-lg md:text-xl font-bold text-gray-800 flex items-center gap-3">
                     <div class="p-2 bg-blue-100 rounded-lg text-blue-600">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -252,13 +266,13 @@
                             </svg>
                         </div>
                         <input type="text" id="searchBox" onkeyup="handleSearch()" placeholder="Cari Kode Saham..."
-                            class="pl-11 pr-4 py-3 bg-white border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 rounded-xl text-sm w-full transition-all shadow-sm hover:shadow-md text-gray-800 font-medium placeholder-gray-400">
+                            class="pl-11 pr-4 py-2.5 md:py-3 bg-white border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 rounded-xl text-sm w-full transition-all shadow-sm hover:shadow-md text-gray-800 font-medium placeholder-gray-400">
                     </div>
 
                     <!-- UW Dropdown -->
                     <div class="relative w-full md:w-56">
                         <select id="uwFilter" onchange="loadTablePage(1)"
-                            class="appearance-none pl-5 pr-10 py-3 bg-white border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 rounded-xl text-sm w-full transition-all shadow-sm hover:shadow-md cursor-pointer text-gray-800 font-medium">
+                            class="appearance-none pl-5 pr-10 py-2.5 md:py-3 bg-white border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 rounded-xl text-sm w-full transition-all shadow-sm hover:shadow-md cursor-pointer text-gray-800 font-medium">
                             <option value="">Semua Underwriter</option>
                         </select>
                         <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
@@ -275,16 +289,24 @@
                 <table class="w-full text-sm text-left">
                     <thead class="text-xs text-gray-500 uppercase bg-gray-50/50 border-b border-gray-100">
                         <tr>
-                            <th scope="col" class="px-8 py-4 font-semibold tracking-wider">Kode</th>
-                            <th scope="col" class="px-8 py-4 font-semibold tracking-wider">IPO Date</th>
-                            <th scope="col" class="px-8 py-4 font-semibold tracking-wider">Underwriter</th>
-                            <th scope="col" class="px-8 py-4 text-center font-semibold tracking-wider">H1 %</th>
-                            <th scope="col" class="px-8 py-4 text-center font-semibold tracking-wider">H2 %</th>
-                            <th scope="col" class="px-8 py-4 text-center font-semibold tracking-wider">H3 %</th>
-                            <th scope="col" class="px-8 py-4 text-center font-semibold tracking-wider">H4 %</th>
-                            <th scope="col" class="px-8 py-4 text-center font-semibold tracking-wider">H5 %</th>
-                            <th scope="col" class="px-8 py-4 text-center font-semibold tracking-wider">H6 %</th>
-                            <th scope="col" class="px-8 py-4 text-center font-semibold tracking-wider">H7 %</th>
+                            <th scope="col" class="px-4 py-3 md:px-8 md:py-4 font-semibold tracking-wider">Kode</th>
+                            <th scope="col" class="px-4 py-3 md:px-8 md:py-4 font-semibold tracking-wider">IPO Date</th>
+                            <th scope="col" class="px-4 py-3 md:px-8 md:py-4 font-semibold tracking-wider">Underwriter
+                            </th>
+                            <th scope="col" class="px-4 py-3 md:px-8 md:py-4 text-center font-semibold tracking-wider">
+                                H1 %</th>
+                            <th scope="col" class="px-4 py-3 md:px-8 md:py-4 text-center font-semibold tracking-wider">
+                                H2 %</th>
+                            <th scope="col" class="px-4 py-3 md:px-8 md:py-4 text-center font-semibold tracking-wider">
+                                H3 %</th>
+                            <th scope="col" class="px-4 py-3 md:px-8 md:py-4 text-center font-semibold tracking-wider">
+                                H4 %</th>
+                            <th scope="col" class="px-4 py-3 md:px-8 md:py-4 text-center font-semibold tracking-wider">
+                                H5 %</th>
+                            <th scope="col" class="px-4 py-3 md:px-8 md:py-4 text-center font-semibold tracking-wider">
+                                H6 %</th>
+                            <th scope="col" class="px-4 py-3 md:px-8 md:py-4 text-center font-semibold tracking-wider">
+                                H7 %</th>
                         </tr>
                     </thead>
                     <tbody id="table-body" class="divide-y divide-gray-100/50">
@@ -554,6 +576,7 @@
                     streakEl.innerText = "-";
                 }
 
+                renderTopUWSection(); // Render the new section
                 populateUWFilter();
             }
 
@@ -805,16 +828,16 @@
                 currentTableData.forEach(stock => {
                     tbody.innerHTML += `
                     <tr class="hover:bg-gray-50 border-b border-gray-100">
-                        <td class="px-6 py-4 font-bold text-gray-900">${stock.code}</td>
-                        <td class="px-6 py-4 text-xs text-gray-500">${stock.date}</td>
-                        <td class="px-6 py-4"><span class="px-2 py-1 text-xs font-semibold rounded ${getUWBadgeClass(stock.uw)}">${stock.uw}</span></td>
-                        <td class="px-6 py-4 text-center bg-gray-50/50 ${getColorClass(stock.d1)}">${formatPercent(stock.d1)}</td>
-                        <td class="px-6 py-4 text-center ${getColorClass(stock.d2)}">${formatPercent(stock.d2)}</td>
-                        <td class="px-6 py-4 text-center ${getColorClass(stock.d3)}">${formatPercent(stock.d3)}</td>
-                        <td class="px-6 py-4 text-center ${getColorClass(stock.d4)}">${formatPercent(stock.d4)}</td>
-                        <td class="px-6 py-4 text-center ${getColorClass(stock.d5)}">${formatPercent(stock.d5)}</td>
-                        <td class="px-6 py-4 text-center ${getColorClass(stock.d6)}">${formatPercent(stock.d6)}</td>
-                        <td class="px-6 py-4 text-center bg-gray-50/50 ${getColorClass(stock.d7)}">${formatPercent(stock.d7)}</td>
+                        <td class="px-4 py-3 md:px-6 md:py-4 font-bold text-gray-900">${stock.code}</td>
+                        <td class="px-4 py-3 md:px-6 md:py-4 text-xs text-gray-500">${stock.date}</td>
+                        <td class="px-4 py-3 md:px-6 md:py-4"><span class="px-2 py-1 text-xs font-semibold rounded ${getUWBadgeClass(stock.uw)}">${stock.uw}</span></td>
+                        <td class="px-4 py-3 md:px-6 md:py-4 text-center bg-gray-50/50 ${getColorClass(stock.d1)}">${formatPercent(stock.d1)}</td>
+                        <td class="px-4 py-3 md:px-6 md:py-4 text-center ${getColorClass(stock.d2)}">${formatPercent(stock.d2)}</td>
+                        <td class="px-4 py-3 md:px-6 md:py-4 text-center ${getColorClass(stock.d3)}">${formatPercent(stock.d3)}</td>
+                        <td class="px-4 py-3 md:px-6 md:py-4 text-center ${getColorClass(stock.d4)}">${formatPercent(stock.d4)}</td>
+                        <td class="px-4 py-3 md:px-6 md:py-4 text-center ${getColorClass(stock.d5)}">${formatPercent(stock.d5)}</td>
+                        <td class="px-4 py-3 md:px-6 md:py-4 text-center ${getColorClass(stock.d6)}">${formatPercent(stock.d6)}</td>
+                        <td class="px-4 py-3 md:px-6 md:py-4 text-center bg-gray-50/50 ${getColorClass(stock.d7)}">${formatPercent(stock.d7)}</td>
                     </tr>
                 `;
                 });
@@ -1049,6 +1072,68 @@
                 `;
                 });
             }
+
+            function renderTopUWSection() {
+                // Calculate Stats
+                let uwStats = {};
+                globalStocks.forEach(s => {
+                    if (s.uw && s.uw !== "-") {
+                        if (!uwStats[s.uw]) uwStats[s.uw] = { count: 0, w1: 0, w2: 0, w3: 0 };
+                        uwStats[s.uw].count++;
+                        if (s.d1 > 0) uwStats[s.uw].w1++;
+                        if (s.d2 > 0) uwStats[s.uw].w2++;
+                        if (s.d3 > 0) uwStats[s.uw].w3++;
+                    }
+                });
+
+                let topList = [];
+                for (let [uw, s] of Object.entries(uwStats)) {
+                    let wr1 = (s.w1 / s.count) * 100;
+                    let wr2 = (s.w2 / s.count) * 100;
+                    let wr3 = (s.w3 / s.count) * 100;
+                    let avg = (wr1 + wr2 + wr3) / 3;
+                    if (avg >= 80) topList.push({ uw, count: s.count, avg, wr1, wr2, wr3 });
+                }
+                topList.sort((a, b) => b.avg - a.avg);
+
+                const section = document.getElementById('top-uw-section');
+                const grid = document.getElementById('top-uw-grid');
+
+                if (topList.length === 0) {
+                    section.classList.add('hidden');
+                    return;
+                }
+
+                section.classList.remove('hidden');
+                grid.innerHTML = '';
+
+                topList.forEach((item, i) => {
+                    const rank = i + 1;
+                    let rankColor = "bg-gray-100 text-gray-600";
+                    if (rank === 1) rankColor = "bg-yellow-100 text-yellow-700 border border-yellow-200";
+                    if (rank === 2) rankColor = "bg-gray-100 text-gray-700 border border-gray-200";
+                    if (rank === 3) rankColor = "bg-orange-100 text-orange-700 border border-orange-200";
+
+                    grid.innerHTML += `
+                        <div class="bg-white/60 backdrop-blur-sm border border-white/60 rounded-xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 flex items-center justify-between group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full ${rankColor} flex items-center justify-center font-bold shadow-sm">
+                                    ${rank}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 text-lg leading-tight">${item.uw}</h4>
+                                    <p class="text-xs text-gray-500 font-medium">${item.count} Emiten</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-black text-green-600">${item.avg.toFixed(0)}%</div>
+                                <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Win Rate</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
             function closeTopUWModal() {
                 document.getElementById('top-uw-modal').classList.add('hidden');
                 document.getElementById('top-uw-modal').classList.remove('flex');
