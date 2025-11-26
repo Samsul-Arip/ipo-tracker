@@ -308,121 +308,418 @@
                 <h3 class="text-lg font-bold text-gray-700">Manajemen Data</h3>
                 <button onclick="refreshData()" class="text-sm text-blue-600 hover:underline">Refresh Data</button>
             </div>
-            <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-100 sticky top-0">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Kode</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">UW</th>
-                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase">H1 %</th>
-                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="admin-table-body" class="bg-white divide-y divide-gray-200 text-sm"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div id="top-uw-modal"
-        class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 backdrop-blur-sm transition-opacity">
-        <div
-            class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden transform transition-all scale-100">
-            <div
-                class="bg-gradient-to-r from-purple-700 to-indigo-800 px-6 py-4 flex justify-between items-center shadow-md">
-                <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                    <span>🏆</span> Top Underwriters Leaderboard
-                </h3>
-                <button onclick="closeTopUWModal()"
-                    class="text-white hover:text-gray-200 transition transform hover:scale-110">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                        </path>
-                    </svg>
-                </button>
-            </div>
-            <div class="p-5 bg-gray-50">
-                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 mb-4 rounded-r shadow-sm flex items-start gap-3">
-                    <svg class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <div>
-                        <p class="text-sm font-bold text-blue-800">Kriteria Seleksi:</p>
-                        <p class="text-xs text-blue-700 mt-1">Menampilkan Underwriter dengan <span class="font-bold">Win
-                                Rate 80% - 100%</span> (Rata-rata 3 Hari Pertama Listing).</p>
+            <div class="bg-white shadow-sm rounded-xl overflow-hidden mb-8 border border-gray-100">
+                <div
+                    class="px-6 py-5 border-b border-gray-100 flex flex-col md:flex-row justify-between md:items-center gap-4 bg-gray-50/50">
+                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4">
+                            </path>
+                        </svg>
+                        Data Saham (Database)
+                    </h3>
+                    <!-- Admin Search Input -->
+                    <div class="relative w-full md:w-64">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <input type="text" id="adminSearchBox" onkeyup="handleAdminSearch()"
+                            placeholder="Cari Kode Saham..."
+                            class="pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full transition-shadow shadow-sm">
                     </div>
                 </div>
-                <div id="modal-top-uw-list" class="overflow-y-auto max-h-[60vh] space-y-3 pr-1"></div>
-            </div>
-            <div class="bg-gray-100 px-6 py-4 flex justify-end border-t border-gray-200">
-                <button onclick="closeTopUWModal()"
-                    class="px-5 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-semibold shadow-sm transition">Tutup</button>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Kode</th>
+                                <th scope="col" class="px-6 py-3">UW</th>
+                                <th scope="col" class="px-6 py-3 text-center">D1</th>
+                                <th scope="col" class="px-6 py-3 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body">
+                            <!-- Data Admin Rendered Here -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Admin Pagination Container -->
+                <div id="admin-pagination-container"
+                    class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between hidden">
+                    <!-- Controls injected by JS -->
+                </div>
             </div>
         </div>
-    </div>
 
-    <script>
-        // ==========================================
-        // KONFIGURASI SUPABASE - GANTI INI!
-        // ==========================================
-        const SUPABASE_URL = 'https://rqgkkrodzqfillmrdikj.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxZ2trcm9kenFmaWxsbXJkaWtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNjUyNDEsImV4cCI6MjA3OTc0MTI0MX0.n4Pdzs45pHgLzSfwSvDk3rtbXmRjjk2DhE18HcXrzRk';
+        <div id="top-uw-modal"
+            class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 backdrop-blur-sm transition-opacity">
+            <div
+                class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden transform transition-all scale-100">
+                <div
+                    class="bg-gradient-to-r from-purple-700 to-indigo-800 px-6 py-4 flex justify-between items-center shadow-md">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <span>🏆</span> Top Underwriters Leaderboard
+                    </h3>
+                    <button onclick="closeTopUWModal()"
+                        class="text-white hover:text-gray-200 transition transform hover:scale-110">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-5 bg-gray-50">
+                    <div
+                        class="bg-blue-50 border-l-4 border-blue-500 p-3 mb-4 rounded-r shadow-sm flex items-start gap-3">
+                        <svg class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                            <p class="text-sm font-bold text-blue-800">Kriteria Seleksi:</p>
+                            <p class="text-xs text-blue-700 mt-1">Menampilkan Underwriter dengan <span
+                                    class="font-bold">Win
+                                    Rate 80% - 100%</span> (Rata-rata 3 Hari Pertama Listing).</p>
+                        </div>
+                    </div>
+                    <div id="modal-top-uw-list" class="overflow-y-auto max-h-[60vh] space-y-3 pr-1"></div>
+                </div>
+                <div class="bg-gray-100 px-6 py-4 flex justify-end border-t border-gray-200">
+                    <button onclick="closeTopUWModal()"
+                        class="px-5 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-semibold shadow-sm transition">Tutup</button>
+                </div>
+            </div>
+        </div>
 
-        // Inisialisasi Client
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        // ==========================================
+        <script>
+            // ==========================================
+            // KONFIGURASI SUPABASE - GANTI INI!
+            // ==========================================
+            const SUPABASE_URL = 'https://rqgkkrodzqfillmrdikj.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxZ2trcm9kenFmaWxsbXJkaWtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNjUyNDEsImV4cCI6MjA3OTc0MTI0MX0.n4Pdzs45pHgLzSfwSvDk3rtbXmRjjk2DhE18HcXrzRk';
 
-        // --- DATA & STATE ---
-        let globalStocks = []; // For Stats & Modal
-        let currentTableData = []; // For Table Display
-        let totalServerItems = 0; // For Pagination
-        let currentPage = 1;
-        const itemsPerPage = 10;
+            // Inisialisasi Client
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            // ==========================================
 
-        // --- INITIALIZATION ---
-        async function refreshData() {
-            showLoading(true);
-            try {
-                // 1. Fetch Global Data for Stats
-                await updateStats();
-                // 2. Fetch First Page for Table
-                await loadTablePage(1);
-            } catch (error) {
-                console.error("Error refreshing data:", error);
-                alert("Gagal memuat data.");
-            } finally {
+            // --- DATA & STATE ---
+            let globalStocks = []; // For Stats & Modal
+            let currentTableData = []; // For Table Display
+            let totalServerItems = 0; // For Pagination
+            let currentPage = 1;
+
+            // Admin State
+            let currentAdminData = [];
+            let totalAdminItems = 0;
+            let adminCurrentPage = 1;
+            const itemsPerPage = 10;
+
+            // --- INITIALIZATION ---
+            async function refreshData() {
+                showLoading(true);
+                try {
+                    // 1. Fetch Global Data for Stats
+                    await updateStats();
+                    // 2. Fetch First Page for Table
+                    await loadTablePage(1);
+                } catch (error) {
+                    console.error("Error refreshing data:", error);
+                    alert("Gagal memuat data.");
+                } finally {
+                    showLoading(false);
+                }
+            }
+
+            async function updateStats() {
+                const { data, error } = await supabase.from('stocks').select('*');
+                if (error) throw error;
+                globalStocks = data || [];
+
+                // Calculate Dashboard Stats
+                let count = 0, wins1 = 0, losses = 0;
+                let streakCandidates = [];
+
+                globalStocks.forEach(stock => {
+                    count++;
+                    if (stock.d1 > 0) wins1++;
+                    if (stock.d1 < 0) losses++;
+                    if (stock.d1 > 0 && stock.d2 > 0 && stock.d3 > 0 && stock.d4 > 0 && stock.d5 > 0 && stock.d6 > 0) {
+                        if (stock.uw && stock.uw !== "-") streakCandidates.push(stock.uw);
+                    }
+                });
+
+                document.getElementById('total-saham').innerText = count;
+                document.getElementById('breadth-green').innerText = wins1;
+                document.getElementById('breadth-red').innerText = losses;
+
+                // Update Streak Card
+                const streakEl = document.getElementById('top-uw-streak');
+                if (streakCandidates.length > 0) {
+                    let uwGlobalStats = {};
+                    globalStocks.forEach(s => {
+                        if (s.uw && s.uw !== "-") {
+                            if (!uwGlobalStats[s.uw]) uwGlobalStats[s.uw] = { count: 0, w1: 0, w2: 0, w3: 0 };
+                            uwGlobalStats[s.uw].count++;
+                            if (s.d1 > 0) uwGlobalStats[s.uw].w1++;
+                            if (s.d2 > 0) uwGlobalStats[s.uw].w2++;
+                            if (s.d3 > 0) uwGlobalStats[s.uw].w3++;
+                        }
+                    });
+
+                    let bestUW = null;
+                    let bestAvgWR = -1;
+                    streakCandidates.forEach(uw => {
+                        const s = uwGlobalStats[uw];
+                        if (s) {
+                            const avg = ((s.w1 / s.count) + (s.w2 / s.count) + (s.w3 / s.count)) / 3 * 100;
+                            if (avg > bestAvgWR) {
+                                bestAvgWR = avg;
+                                bestUW = uw;
+                            }
+                        }
+                    });
+
+                    if (bestUW) {
+                        streakEl.innerHTML = `${bestUW} <span class="text-sm font-normal text-gray-600 block">Avg WR: ${bestAvgWR.toFixed(0)}%</span>`;
+                    } else {
+                        streakEl.innerText = "-";
+                    }
+                } else {
+                    streakEl.innerText = "-";
+                }
+
+                populateUWFilter();
+            }
+
+            async function loadTablePage(page) {
+                showLoading(true);
+                currentPage = page;
+                const search = document.getElementById('searchBox').value;
+                const uwFilter = document.getElementById('uwFilter').value;
+
+                const start = (currentPage - 1) * itemsPerPage;
+                const end = start + itemsPerPage - 1;
+
+                let query = supabase.from('stocks').select('*', { count: 'exact' });
+
+                if (search) query = query.ilike('code', `%${search}%`);
+                if (uwFilter) query = query.eq('uw', uwFilter);
+
+                query = query.range(start, end).order('date', { ascending: false }); // Default sort by date desc (newest first)
+
+                const { data, count, error } = await query;
+
+                if (error) {
+                    console.error("Error loading page:", error);
+                    alert("Gagal memuat halaman.");
+                } else {
+                    currentTableData = data || [];
+                    totalServerItems = count || 0;
+                    renderTableRows();
+                    renderPaginationControls();
+                }
                 showLoading(false);
             }
-        }
 
-        async function updateStats() {
-            const { data, error } = await supabase.from('stocks').select('*');
-            if (error) throw error;
-            globalStocks = data || [];
+            // --- FUNGSI CRUD (DATABASE) ---
 
-            // Calculate Dashboard Stats
-            let count = 0, wins1 = 0, losses = 0;
-            let streakCandidates = [];
+            // 1. CREATE / UPDATE
+            document.getElementById('inputForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                showLoading(true);
+                const btn = document.getElementById('btn-submit');
+                btn.innerText = "Menyimpan...";
+                btn.disabled = true;
 
-            globalStocks.forEach(stock => {
-                count++;
-                if (stock.d1 > 0) wins1++;
-                if (stock.d1 < 0) losses++;
-                if (stock.d1 > 0 && stock.d2 > 0 && stock.d3 > 0 && stock.d4 > 0 && stock.d5 > 0 && stock.d6 > 0) {
-                    if (stock.uw && stock.uw !== "-") streakCandidates.push(stock.uw);
+                try {
+                    const id = document.getElementById('edit-id').value;
+                    const newStock = {
+                        code: document.getElementById('code').value.toUpperCase(),
+                        date: document.getElementById('date').value,
+                        uw: document.getElementById('uw').value.toUpperCase(),
+                        float: parseFloat(document.getElementById('float').value) || 0,
+                        d1: parseFloat(document.getElementById('d1').value) || 0,
+                        d2: parseFloat(document.getElementById('d2').value) || 0,
+                        d3: parseFloat(document.getElementById('d3').value) || 0,
+                        d4: parseFloat(document.getElementById('d4').value) || 0,
+                        d5: parseFloat(document.getElementById('d5').value) || 0,
+                        d6: parseFloat(document.getElementById('d6').value) || 0,
+                        d7: parseFloat(document.getElementById('d7').value) || 0,
+                    };
+
+                    if (id) {
+                        newStock.id = id; // Add ID for update
+                    }
+
+                    // --- DUPLICATE CHECK ---
+                    // Check if code exists (exclude current ID if editing)
+                    let query = supabase.from('stocks').select('id').eq('code', newStock.code);
+                    if (id) {
+                        query = query.neq('id', id);
+                    }
+                    const { data: existing, error: checkError } = await query;
+
+                    if (checkError) throw checkError;
+                    if (existing && existing.length > 0) {
+                        alert(`Kode Saham ${newStock.code} sudah ada! Tidak bisa menyimpan duplikat.`);
+                        showLoading(false);
+                        btn.innerText = "Simpan ke Database";
+                        btn.disabled = false;
+                        return;
+                    }
+
+                    const { data, error } = await supabase.from('stocks').upsert(newStock).select();
+                    if (error) throw error;
+
+                    // Refresh data
+                    await refreshData(); // Updates global stats
+                    await loadAdminTablePage(adminCurrentPage); // Refresh Admin Table
+
+                    // Reset Form
+                    document.getElementById('inputForm').reset();
+                    document.getElementById('edit-id').value = '';
+                    document.getElementById('form-title').innerText = 'Input Data Baru (Database)';
+                    document.getElementById('btn-submit').innerText = 'Simpan ke Database';
+                    document.getElementById('btn-submit').classList.remove('bg-green-600');
+                    document.getElementById('btn-submit').classList.add('bg-blue-600');
+                    document.getElementById('btn-cancel').classList.add('hidden');
+
+                    alert("Data berhasil disimpan!");
+                } catch (error) {
+                    console.error("Error saving data:", error);
+                    alert("Gagal menyimpan data: " + error.message);
+                } finally {
+                    btn.innerText = "Simpan ke Database";
+                    btn.disabled = false;
+                    showLoading(false);
                 }
             });
 
-            document.getElementById('total-saham').innerText = count;
-            document.getElementById('breadth-green').innerText = wins1;
-            document.getElementById('breadth-red').innerText = losses;
+            // 2. DELETE
+            async function deleteStock(id) {
+                if (!confirm("Yakin ingin menghapus data ini dari Database Permanen?")) return;
+                showLoading(true);
+                try {
+                    const { error } = await supabase.from('stocks').delete().eq('id', id);
+                    if (error) throw error;
+                    await refreshData(); // Updates global stats
+                    await loadAdminTablePage(adminCurrentPage); // Refresh Admin Table
+                } catch (error) {
+                    console.error("Error deleting:", error);
+                    alert("Gagal menghapus data.");
+                } finally {
+                    showLoading(false);
+                }
+            }
 
-            // Update Streak Card
-            const streakEl = document.getElementById('top-uw-streak');
-            if (streakCandidates.length > 0) {
-                let uwGlobalStats = {};
+            // 3. PREPARE EDIT
+            function editStock(index) {
+                const stock = currentAdminData[index]; // Use currentAdminData instead of globalStocks
+
+                document.getElementById('edit-id').value = stock.id; // Simpan ID database
+                document.getElementById('code').value = stock.code;
+                document.getElementById('date').value = stock.date;
+                document.getElementById('uw').value = stock.uw;
+                document.getElementById('float').value = stock.float;
+                document.getElementById('d1').value = stock.d1;
+                document.getElementById('d2').value = stock.d2;
+                document.getElementById('d3').value = stock.d3;
+                document.getElementById('d4').value = stock.d4;
+                document.getElementById('d5').value = stock.d5;
+                document.getElementById('d6').value = stock.d6;
+                document.getElementById('d7').value = stock.d7;
+
+                // UI Changes
+                document.getElementById('form-title').innerText = "Edit Data Database: " + stock.code;
+                document.getElementById('btn-submit').innerText = "Update Data";
+                document.getElementById('btn-submit').classList.remove('bg-blue-600');
+                document.getElementById('btn-submit').classList.add('bg-green-600');
+                document.getElementById('btn-cancel').classList.remove('hidden');
+
+                document.getElementById('admin-page').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function cancelEdit() {
+                document.getElementById('inputForm').reset();
+                document.getElementById('edit-id').value = "";
+                document.getElementById('form-title').innerText = "Input Data Baru (Database)";
+                document.getElementById('btn-submit').innerText = "Simpan ke Database";
+                document.getElementById('btn-submit').classList.add('bg-blue-600');
+                document.getElementById('btn-submit').classList.remove('bg-green-600');
+                document.getElementById('btn-cancel').classList.add('hidden');
+            }
+
+            // --- VISUALIZATION & HELPER FUNCTIONS ---
+
+            function showLoading(isLoading) {
+                document.getElementById('loading-overlay').classList.toggle('hidden', !isLoading);
+            }
+
+            function showPage(pageId) {
+                if (pageId === 'admin') {
+                    const password = prompt("Masukkan Password Admin:");
+                    if (password !== "@Saham123") {
+                        alert("Password Salah! Akses ditolak.");
+                        return;
+                    }
+                }
+
+                document.getElementById('user-page').classList.add('hidden');
+                document.getElementById('admin-page').classList.add('hidden');
+                document.getElementById(pageId + '-page').classList.remove('hidden');
+
+                if (pageId === 'user') refreshData();
+                if (pageId === 'admin') {
+                    loadAdminTablePage(1);
+                }
+            }
+
+            function getColorClass(value) {
+                const num = parseFloat(value);
+                if (isNaN(num)) return 'text-gray-400';
+                if (num > 0) return 'text-green-600 font-bold';
+                if (num < 0) return 'text-red-600 font-bold';
+                return 'text-yellow-600 font-bold';
+            }
+
+            function formatPercent(value) {
+                const num = parseFloat(value);
+                if (isNaN(num)) return "-";
+                return (num > 0 ? "+" : "") + num + "%";
+            }
+
+            function populateUWFilter() {
+                const uwSelect = document.getElementById('uwFilter');
+                const currentVal = uwSelect.value;
+                const uws = [...new Set(globalStocks.map(s => s.uw).filter(uw => uw && uw !== "-"))].sort();
+
+                // Keep "Semua Underwriter" option
+                if (uwSelect.options.length <= 1 || uwSelect.options[0].value !== "") { // Check if default option is missing or not the first
+                    uwSelect.innerHTML = '<option value="">Semua Underwriter</option>';
+                }
+
+                // Add new UWs, avoiding duplicates if already present
+                const existingOptions = Array.from(uwSelect.options).map(opt => opt.value);
+                uws.forEach(uw => {
+                    if (!existingOptions.includes(uw)) {
+                        const option = document.createElement('option');
+                        option.value = uw;
+                        option.innerText = uw;
+                        uwSelect.appendChild(option);
+                    }
+                });
+                // Restore selection if exists
+                if (uws.includes(currentVal)) uwSelect.value = currentVal;
+            }
+
+            function getUWBadgeClass(uw) {
+                const uwGlobalStats = {};
                 globalStocks.forEach(s => {
                     if (s.uw && s.uw !== "-") {
                         if (!uwGlobalStats[s.uw]) uwGlobalStats[s.uw] = { count: 0, w1: 0, w2: 0, w3: 0 };
@@ -433,264 +730,20 @@
                     }
                 });
 
-                let bestUW = null;
-                let bestAvgWR = -1;
-                streakCandidates.forEach(uw => {
-                    const s = uwGlobalStats[uw];
-                    if (s) {
-                        const avg = ((s.w1 / s.count) + (s.w2 / s.count) + (s.w3 / s.count)) / 3 * 100;
-                        if (avg > bestAvgWR) {
-                            bestAvgWR = avg;
-                            bestUW = uw;
-                        }
-                    }
-                });
-
-                if (bestUW) {
-                    streakEl.innerHTML = `${bestUW} <span class="text-sm font-normal text-gray-600 block">Avg WR: ${bestAvgWR.toFixed(0)}%</span>`;
-                } else {
-                    streakEl.innerText = "-";
-                }
-            } else {
-                streakEl.innerText = "-";
+                if (!uwGlobalStats[uw]) return "bg-gray-200 text-gray-700";
+                const s = uwGlobalStats[uw];
+                const avgWr = ((s.w1 / s.count) + (s.w2 / s.count) + (s.w3 / s.count)) / 3 * 100;
+                if (avgWr >= 90) return "bg-green-600 text-white";
+                if (avgWr >= 80) return "bg-green-100 text-green-800";
+                return "bg-red-100 text-red-800";
             }
 
-            populateUWFilter();
-        }
+            function renderTableRows() {
+                const tbody = document.getElementById('table-body');
+                tbody.innerHTML = '';
 
-        async function loadTablePage(page) {
-            showLoading(true);
-            currentPage = page;
-            const search = document.getElementById('searchBox').value;
-            const uwFilter = document.getElementById('uwFilter').value;
-
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage - 1;
-
-            let query = supabase.from('stocks').select('*', { count: 'exact' });
-
-            if (search) query = query.ilike('code', `%${search}%`);
-            if (uwFilter) query = query.eq('uw', uwFilter);
-
-            query = query.range(start, end).order('date', { ascending: false }); // Default sort by date desc (newest first)
-
-            const { data, count, error } = await query;
-
-            if (error) {
-                console.error("Error loading page:", error);
-                alert("Gagal memuat halaman.");
-            } else {
-                currentTableData = data || [];
-                totalServerItems = count || 0;
-                renderTableRows();
-                renderPaginationControls();
-            }
-            showLoading(false);
-        }
-
-        // --- FUNGSI CRUD (DATABASE) ---
-
-        // 1. CREATE / UPDATE
-        document.getElementById('inputForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
-            showLoading(true);
-            const btn = document.getElementById('btn-submit');
-            btn.innerText = "Menyimpan...";
-            btn.disabled = true;
-
-            try {
-                const id = document.getElementById('edit-id').value;
-                const newStock = {
-                    code: document.getElementById('code').value.toUpperCase(),
-                    date: document.getElementById('date').value,
-                    uw: document.getElementById('uw').value.toUpperCase(),
-                    float: parseFloat(document.getElementById('float').value) || 0,
-                    d1: parseFloat(document.getElementById('d1').value) || 0,
-                    d2: parseFloat(document.getElementById('d2').value) || 0,
-                    d3: parseFloat(document.getElementById('d3').value) || 0,
-                    d4: parseFloat(document.getElementById('d4').value) || 0,
-                    d5: parseFloat(document.getElementById('d5').value) || 0,
-                    d6: parseFloat(document.getElementById('d6').value) || 0,
-                    d7: parseFloat(document.getElementById('d7').value) || 0,
-                };
-
-                if (id) {
-                    newStock.id = id; // Add ID for update
-                }
-
-                const { data, error } = await supabase.from('stocks').upsert(newStock).select();
-                if (error) throw error;
-
-                // Refresh data
-                await refreshData();
-                renderAdminTable(); // Re-render admin table with new data
-
-                // Reset Form
-                document.getElementById('inputForm').reset();
-                document.getElementById('edit-id').value = '';
-                document.getElementById('form-title').innerText = 'Input Data Baru (Database)';
-                document.getElementById('btn-submit').innerText = 'Simpan ke Database';
-                document.getElementById('btn-submit').classList.remove('bg-green-600');
-                document.getElementById('btn-submit').classList.add('bg-blue-600');
-                document.getElementById('btn-cancel').classList.add('hidden');
-
-                alert("Data berhasil disimpan!");
-            } catch (error) {
-                console.error("Error saving data:", error);
-                alert("Gagal menyimpan data: " + error.message);
-            } finally {
-                btn.innerText = "Simpan ke Database";
-                btn.disabled = false;
-                showLoading(false);
-            }
-        });
-
-        // 2. DELETE
-        async function deleteStock(id) {
-            if (!confirm("Yakin ingin menghapus data ini dari Database Permanen?")) return;
-            showLoading(true);
-            try {
-                const { error } = await supabase.from('stocks').delete().eq('id', id);
-                if (error) throw error;
-                await refreshData();
-                renderAdminTable();
-            } catch (error) {
-                console.error("Error deleting:", error);
-                alert("Gagal menghapus data.");
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // 3. PREPARE EDIT
-        function editStock(index) {
-            const stock = globalStocks[index]; // Ambil dari array lokal
-
-            document.getElementById('edit-id').value = stock.id; // Simpan ID database
-            document.getElementById('code').value = stock.code;
-            document.getElementById('date').value = stock.date;
-            document.getElementById('uw').value = stock.uw;
-            document.getElementById('float').value = stock.float;
-            document.getElementById('d1').value = stock.d1;
-            document.getElementById('d2').value = stock.d2;
-            document.getElementById('d3').value = stock.d3;
-            document.getElementById('d4').value = stock.d4;
-            document.getElementById('d5').value = stock.d5;
-            document.getElementById('d6').value = stock.d6;
-            document.getElementById('d7').value = stock.d7;
-
-            // UI Changes
-            document.getElementById('form-title').innerText = "Edit Data Database: " + stock.code;
-            document.getElementById('btn-submit').innerText = "Update Data";
-            document.getElementById('btn-submit').classList.remove('bg-blue-600');
-            document.getElementById('btn-submit').classList.add('bg-green-600');
-            document.getElementById('btn-cancel').classList.remove('hidden');
-
-            document.getElementById('admin-page').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function cancelEdit() {
-            document.getElementById('inputForm').reset();
-            document.getElementById('edit-id').value = "";
-            document.getElementById('form-title').innerText = "Input Data Baru (Database)";
-            document.getElementById('btn-submit').innerText = "Simpan ke Database";
-            document.getElementById('btn-submit').classList.add('bg-blue-600');
-            document.getElementById('btn-submit').classList.remove('bg-green-600');
-            document.getElementById('btn-cancel').classList.add('hidden');
-        }
-
-        // --- VISUALIZATION & HELPER FUNCTIONS ---
-
-        function showLoading(isLoading) {
-            document.getElementById('loading-overlay').classList.toggle('hidden', !isLoading);
-        }
-
-        function showPage(pageId) {
-            if (pageId === 'admin') {
-                const password = prompt("Masukkan Password Admin:");
-                if (password !== "@Saham123") {
-                    alert("Password Salah! Akses ditolak.");
-                    return;
-                }
-            }
-
-            document.getElementById('user-page').classList.add('hidden');
-            document.getElementById('admin-page').classList.add('hidden');
-            document.getElementById(pageId + '-page').classList.remove('hidden');
-
-            if (pageId === 'user') refreshData();
-            if (pageId === 'admin') {
-                // Admin needs all data for editing, so globalStocks is appropriate.
-                // If globalStocks is empty, fetch it. Otherwise, just render the admin table.
-                if (globalStocks.length === 0) refreshData();
-                else renderAdminTable();
-            }
-        }
-
-        function getColorClass(value) {
-            const num = parseFloat(value);
-            if (isNaN(num)) return 'text-gray-400';
-            if (num > 0) return 'text-green-600 font-bold';
-            if (num < 0) return 'text-red-600 font-bold';
-            return 'text-yellow-600 font-bold';
-        }
-
-        function formatPercent(value) {
-            const num = parseFloat(value);
-            if (isNaN(num)) return "-";
-            return (num > 0 ? "+" : "") + num + "%";
-        }
-
-        function populateUWFilter() {
-            const uwSelect = document.getElementById('uwFilter');
-            const currentVal = uwSelect.value;
-            const uws = [...new Set(globalStocks.map(s => s.uw).filter(uw => uw && uw !== "-"))].sort();
-
-            // Keep "Semua Underwriter" option
-            if (uwSelect.options.length <= 1 || uwSelect.options[0].value !== "") { // Check if default option is missing or not the first
-                uwSelect.innerHTML = '<option value="">Semua Underwriter</option>';
-            }
-
-            // Add new UWs, avoiding duplicates if already present
-            const existingOptions = Array.from(uwSelect.options).map(opt => opt.value);
-            uws.forEach(uw => {
-                if (!existingOptions.includes(uw)) {
-                    const option = document.createElement('option');
-                    option.value = uw;
-                    option.innerText = uw;
-                    uwSelect.appendChild(option);
-                }
-            });
-            // Restore selection if exists
-            if (uws.includes(currentVal)) uwSelect.value = currentVal;
-        }
-
-        function getUWBadgeClass(uw) {
-            const uwGlobalStats = {};
-            globalStocks.forEach(s => {
-                if (s.uw && s.uw !== "-") {
-                    if (!uwGlobalStats[s.uw]) uwGlobalStats[s.uw] = { count: 0, w1: 0, w2: 0, w3: 0 };
-                    uwGlobalStats[s.uw].count++;
-                    if (s.d1 > 0) uwGlobalStats[s.uw].w1++;
-                    if (s.d2 > 0) uwGlobalStats[s.uw].w2++;
-                    if (s.d3 > 0) uwGlobalStats[s.uw].w3++;
-                }
-            });
-
-            if (!uwGlobalStats[uw]) return "bg-gray-200 text-gray-700";
-            const s = uwGlobalStats[uw];
-            const avgWr = ((s.w1 / s.count) + (s.w2 / s.count) + (s.w3 / s.count)) / 3 * 100;
-            if (avgWr >= 90) return "bg-green-600 text-white";
-            if (avgWr >= 80) return "bg-green-100 text-green-800";
-            return "bg-red-100 text-red-800";
-        }
-
-        function renderTableRows() {
-            const tbody = document.getElementById('table-body');
-            tbody.innerHTML = '';
-
-            currentTableData.forEach(stock => {
-                tbody.innerHTML += `
+                currentTableData.forEach(stock => {
+                    tbody.innerHTML += `
                     <tr class="hover:bg-gray-50 border-b border-gray-100">
                         <td class="px-6 py-4 font-bold text-gray-900">${stock.code}</td>
                         <td class="px-6 py-4 text-xs text-gray-500">${stock.date}</td>
@@ -704,26 +757,55 @@
                         <td class="px-6 py-4 text-center bg-gray-50/50 ${getColorClass(stock.d7)}">${formatPercent(stock.d7)}</td>
                     </tr>
                 `;
-            });
+                });
 
-            if (currentTableData.length === 0) {
-                tbody.innerHTML = `
+                if (currentTableData.length === 0) {
+                    tbody.innerHTML = `
                     <tr>
                         <td colspan="10" class="px-6 py-8 text-center text-gray-500 italic">
                             Data tidak ditemukan.
                         </td>
                     </tr>
                 `;
+                }
             }
-        }
 
-        function renderAdminTable() {
-            const tbody = document.getElementById('admin-table-body');
-            tbody.innerHTML = '';
-            // Use globalStocks for Admin for now (Client-side pagination for admin could be added later)
-            globalStocks.forEach((stock, index) => {
-                // Pass Database ID instead of Index later? No, easier to use Index to get object, then use ID for query.
-                tbody.innerHTML += `
+            // --- ADMIN PAGINATION & SEARCH ---
+
+            async function loadAdminTablePage(page) {
+                showLoading(true);
+                adminCurrentPage = page;
+                const search = document.getElementById('adminSearchBox') ? document.getElementById('adminSearchBox').value : '';
+
+                const start = (adminCurrentPage - 1) * itemsPerPage;
+                const end = start + itemsPerPage - 1;
+
+                let query = supabase.from('stocks').select('*', { count: 'exact' });
+
+                if (search) query = query.ilike('code', `%${search}%`);
+
+                query = query.range(start, end).order('date', { ascending: false });
+
+                const { data, count, error } = await query;
+
+                if (error) {
+                    console.error("Error loading admin page:", error);
+                    alert("Gagal memuat halaman admin.");
+                } else {
+                    currentAdminData = data || [];
+                    totalAdminItems = count || 0;
+                    renderAdminTableRows();
+                    renderAdminPaginationControls();
+                }
+                showLoading(false);
+            }
+
+            function renderAdminTableRows() {
+                const tbody = document.getElementById('admin-table-body');
+                tbody.innerHTML = '';
+
+                currentAdminData.forEach((stock, index) => {
+                    tbody.innerHTML += `
                     <tr class="hover:bg-gray-50 border-b">
                         <td class="px-6 py-3 font-bold text-gray-800">${stock.code}</td>
                         <td class="px-6 py-3 text-gray-600">${stock.uw}</td>
@@ -734,43 +816,81 @@
                         </td>
                     </tr>
                 `;
-            });
+                });
 
-            if (globalStocks.length === 0) {
-                tbody.innerHTML = `
+                if (currentAdminData.length === 0) {
+                    tbody.innerHTML = `
                     <tr>
                         <td colspan="4" class="px-6 py-8 text-center text-gray-500 italic">
-                            Belum ada data saham. Silakan input data baru.
+                            Data tidak ditemukan.
                         </td>
                     </tr>
                 `;
-            }
-        }
-
-        function renderPaginationControls() {
-            const totalPages = Math.ceil(totalServerItems / itemsPerPage);
-
-            let container = document.getElementById('pagination-container');
-            if (!container) {
-                const tableContainer = document.querySelector('.overflow-x-auto');
-                const newDiv = document.createElement('div');
-                newDiv.id = 'pagination-container';
-                newDiv.className = "px-6 py-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between";
-                tableContainer.parentNode.appendChild(newDiv);
-                container = newDiv;
+                }
             }
 
-            if (totalPages <= 1 && totalServerItems > 0) {
-                // Show page 1 of 1 if items exist but fit on one page
-                container.classList.remove('hidden');
-            } else if (totalServerItems === 0) {
-                container.classList.add('hidden');
-                return;
-            } else {
-                container.classList.remove('hidden');
+            function renderAdminPaginationControls() {
+                const totalPages = Math.ceil(totalAdminItems / itemsPerPage);
+                const container = document.getElementById('admin-pagination-container');
+
+                if (totalPages <= 1 && totalAdminItems > 0) {
+                    container.classList.remove('hidden');
+                } else if (totalAdminItems === 0) {
+                    container.classList.add('hidden');
+                    return;
+                } else {
+                    container.classList.remove('hidden');
+                }
+
+                container.innerHTML = `
+                <div class="text-sm text-gray-500">
+                    Halaman <span class="font-bold text-gray-800">${adminCurrentPage}</span> dari <span class="font-bold text-gray-800">${totalPages || 1}</span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="loadAdminTablePage(${adminCurrentPage - 1})" ${adminCurrentPage === 1 ? 'disabled' : ''} 
+                        class="px-3 py-1 rounded border border-gray-300 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition">
+                        Sebelumnya
+                    </button>
+                    <button onclick="loadAdminTablePage(${adminCurrentPage + 1})" ${adminCurrentPage >= totalPages ? 'disabled' : ''}
+                        class="px-3 py-1 rounded border border-gray-300 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition">
+                        Selanjutnya
+                    </button>
+                </div>
+            `;
             }
 
-            container.innerHTML = `
+            let adminSearchTimeout;
+            function handleAdminSearch() {
+                clearTimeout(adminSearchTimeout);
+                adminSearchTimeout = setTimeout(() => {
+                    loadAdminTablePage(1);
+                }, 500);
+            }
+
+            function renderPaginationControls() {
+                const totalPages = Math.ceil(totalServerItems / itemsPerPage);
+
+                let container = document.getElementById('pagination-container');
+                if (!container) {
+                    const tableContainer = document.querySelector('.overflow-x-auto');
+                    const newDiv = document.createElement('div');
+                    newDiv.id = 'pagination-container';
+                    newDiv.className = "px-6 py-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between";
+                    tableContainer.parentNode.appendChild(newDiv);
+                    container = newDiv;
+                }
+
+                if (totalPages <= 1 && totalServerItems > 0) {
+                    // Show page 1 of 1 if items exist but fit on one page
+                    container.classList.remove('hidden');
+                } else if (totalServerItems === 0) {
+                    container.classList.add('hidden');
+                    return;
+                } else {
+                    container.classList.remove('hidden');
+                }
+
+                container.innerHTML = `
                 <div class="text-sm text-gray-500">
                     Halaman <span class="font-bold text-gray-800">${currentPage}</span> dari <span class="font-bold text-gray-800">${totalPages || 1}</span>
                 </div>
@@ -785,65 +905,65 @@
                     </button>
                 </div>
             `;
-        }
-
-        // Debounce for Search
-        let searchTimeout;
-        function handleSearch() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                loadTablePage(1);
-            }, 500);
-        }
-
-        // --- TOP UW MODAL ---
-        function openTopUWModal() {
-            document.getElementById('top-uw-modal').classList.remove('hidden');
-            document.getElementById('top-uw-modal').classList.add('flex');
-
-            // Calculate Top UW
-            let uwStats = {};
-            globalStocks.forEach(s => {
-                if (s.uw && s.uw !== "-") {
-                    if (!uwStats[s.uw]) uwStats[s.uw] = { count: 0, w1: 0, w2: 0, w3: 0 };
-                    uwStats[s.uw].count++;
-                    if (s.d1 > 0) uwStats[s.uw].w1++;
-                    if (s.d2 > 0) uwStats[s.uw].w2++;
-                    if (s.d3 > 0) uwStats[s.uw].w3++;
-                }
-            });
-
-            let topList = [];
-            for (let [uw, s] of Object.entries(uwStats)) {
-                let wr1 = (s.w1 / s.count) * 100;
-                let wr2 = (s.w2 / s.count) * 100;
-                let wr3 = (s.w3 / s.count) * 100;
-                let avg = (wr1 + wr2 + wr3) / 3;
-                if (avg >= 80) topList.push({ uw, count: s.count, avg, wr1, wr2, wr3 });
             }
-            topList.sort((a, b) => b.avg - a.avg);
 
-            const listEl = document.getElementById('modal-top-uw-list');
-            listEl.innerHTML = '';
-            if (topList.length === 0) listEl.innerHTML = '<p class="text-center text-gray-500">Tidak ada data</p>';
+            // Debounce for Search
+            let searchTimeout;
+            function handleSearch() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    loadTablePage(1);
+                }, 500);
+            }
 
-            topList.forEach((item, i) => {
-                const rank = i + 1;
-                let rankBadge = `<span class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold text-sm shadow-inner">#${rank}</span>`;
-                let borderClass = "border-l-4 border-gray-300";
+            // --- TOP UW MODAL ---
+            function openTopUWModal() {
+                document.getElementById('top-uw-modal').classList.remove('hidden');
+                document.getElementById('top-uw-modal').classList.add('flex');
 
-                if (rank === 1) {
-                    rankBadge = `<span class="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100 text-yellow-700 font-bold text-sm shadow-inner border border-yellow-300">🥇</span>`;
-                    borderClass = "border-l-4 border-yellow-400";
-                } else if (rank === 2) {
-                    rankBadge = `<span class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-600 font-bold text-sm shadow-inner border border-gray-300">🥈</span>`;
-                    borderClass = "border-l-4 border-gray-400";
-                } else if (rank === 3) {
-                    rankBadge = `<span class="flex items-center justify-center w-8 h-8 rounded-full bg-orange-100 text-orange-700 font-bold text-sm shadow-inner border border-orange-300">🥉</span>`;
-                    borderClass = "border-l-4 border-orange-400";
+                // Calculate Top UW
+                let uwStats = {};
+                globalStocks.forEach(s => {
+                    if (s.uw && s.uw !== "-") {
+                        if (!uwStats[s.uw]) uwStats[s.uw] = { count: 0, w1: 0, w2: 0, w3: 0 };
+                        uwStats[s.uw].count++;
+                        if (s.d1 > 0) uwStats[s.uw].w1++;
+                        if (s.d2 > 0) uwStats[s.uw].w2++;
+                        if (s.d3 > 0) uwStats[s.uw].w3++;
+                    }
+                });
+
+                let topList = [];
+                for (let [uw, s] of Object.entries(uwStats)) {
+                    let wr1 = (s.w1 / s.count) * 100;
+                    let wr2 = (s.w2 / s.count) * 100;
+                    let wr3 = (s.w3 / s.count) * 100;
+                    let avg = (wr1 + wr2 + wr3) / 3;
+                    if (avg >= 80) topList.push({ uw, count: s.count, avg, wr1, wr2, wr3 });
                 }
+                topList.sort((a, b) => b.avg - a.avg);
 
-                listEl.innerHTML += `
+                const listEl = document.getElementById('modal-top-uw-list');
+                listEl.innerHTML = '';
+                if (topList.length === 0) listEl.innerHTML = '<p class="text-center text-gray-500">Tidak ada data</p>';
+
+                topList.forEach((item, i) => {
+                    const rank = i + 1;
+                    let rankBadge = `<span class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold text-sm shadow-inner">#${rank}</span>`;
+                    let borderClass = "border-l-4 border-gray-300";
+
+                    if (rank === 1) {
+                        rankBadge = `<span class="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100 text-yellow-700 font-bold text-sm shadow-inner border border-yellow-300">🥇</span>`;
+                        borderClass = "border-l-4 border-yellow-400";
+                    } else if (rank === 2) {
+                        rankBadge = `<span class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-600 font-bold text-sm shadow-inner border border-gray-300">🥈</span>`;
+                        borderClass = "border-l-4 border-gray-400";
+                    } else if (rank === 3) {
+                        rankBadge = `<span class="flex items-center justify-center w-8 h-8 rounded-full bg-orange-100 text-orange-700 font-bold text-sm shadow-inner border border-orange-300">🥉</span>`;
+                        borderClass = "border-l-4 border-orange-400";
+                    }
+
+                    listEl.innerHTML += `
                     <div class="bg-white rounded-lg shadow-sm p-4 flex items-center justify-between hover:shadow-md transition-shadow ${borderClass}">
                         <div class="flex items-center gap-4">
                             <div class="flex-shrink-0">${rankBadge}</div>
@@ -867,17 +987,17 @@
                         </div>
                     </div>
                 `;
-            });
-        }
-        function closeTopUWModal() {
-            document.getElementById('top-uw-modal').classList.add('hidden');
-            document.getElementById('top-uw-modal').classList.remove('flex');
-        }
+                });
+            }
+            function closeTopUWModal() {
+                document.getElementById('top-uw-modal').classList.add('hidden');
+                document.getElementById('top-uw-modal').classList.remove('flex');
+            }
 
-        // --- INITIAL LOAD ---
-        refreshData();
+            // --- INITIAL LOAD ---
+            refreshData();
 
-    </script>
+        </script>
 </body>
 
 </html>
