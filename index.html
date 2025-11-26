@@ -394,9 +394,18 @@
         // --- VISUALIZATION & HELPER FUNCTIONS ---
 
         function showPage(pageId) {
+            if (pageId === 'admin') {
+                const password = prompt("Masukkan Password Admin:");
+                if (password !== "@Saham123") {
+                    alert("Password Salah! Akses ditolak.");
+                    return;
+                }
+            }
+
             document.getElementById('user-page').classList.add('hidden');
             document.getElementById('admin-page').classList.add('hidden');
             document.getElementById(pageId + '-page').classList.remove('hidden');
+
             if (pageId === 'user') renderTable();
             if (pageId === 'admin') renderAdminTable();
         }
