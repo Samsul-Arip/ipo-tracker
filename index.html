@@ -6,12 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IDX Underwriter Track Record</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+        }
+
+        .bg-glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
         .idx-green {
@@ -53,23 +69,76 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* Modern Background Animation */
+        @keyframes blob {
+            0% {
+                transform: translate(0px, 0px) scale(1);
+            }
+
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+
+            100% {
+                transform: translate(0px, 0px) scale(1);
+            }
+        }
+
+        .animate-blob {
+            animation: blob 7s infinite;
+        }
+
+        .animation-delay-2000 {
+            animation-delay: 2s;
+        }
+
+        .animation-delay-4000 {
+            animation-delay: 4s;
+        }
     </style>
 </head>
 
-<body>
-
-    <nav class="bg-idx-dark text-white shadow-lg sticky top-0 z-50">
+<body class="bg-slate-50 text-gray-800 font-sans antialiased relative min-h-screen">
+    <!-- Modern Background Elements -->
+    <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div
+            class="absolute top-0 left-1/4 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob">
+        </div>
+        <div
+            class="absolute top-0 right-1/4 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000">
+        </div>
+        <div
+            class="absolute -bottom-32 left-1/3 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000">
+        </div>
+    </div>
+    <nav class="bg-white/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-50 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <span class="text-2xl font-bold tracking-wider text-green-500">IPO<span
-                            class="text-white">HUNTER</span></span>
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center gap-3">
+                    <div class="bg-gradient-to-br from-blue-600 to-purple-600 text-white p-2.5 rounded-xl shadow-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <span
+                            class="text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 tracking-tight">Stock<span
+                                class="text-blue-600">Insight</span></span>
+                        <p class="text-[10px] text-gray-500 font-medium tracking-widest uppercase">Professional
+                            Analytics</p>
+                    </div>
                 </div>
-                <div class="flex space-x-3">
+                <div class="flex items-center space-x-4">
                     <button onclick="showPage('user')"
-                        class="px-4 py-2 rounded text-sm font-semibold bg-gray-700 hover:bg-gray-600 transition">Dashboard</button>
+                        class="text-gray-600 hover:text-blue-600 px-4 py-2 rounded-lg text-sm font-semibold transition-colors hover:bg-blue-50">Dashboard</button>
                     <button onclick="showPage('admin')"
-                        class="px-4 py-2 rounded text-sm font-semibold bg-blue-600 hover:bg-blue-500 transition">Admin
+                        class="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">Admin
                         Panel</button>
                 </div>
             </div>
@@ -84,21 +153,23 @@
         </div>
     </div>
 
-    <div id="user-page" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div id="user-page" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Total Saham Card -->
-            <div
-                class="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 relative overflow-hidden group">
+            <div class="bg-glass p-6 rounded-2xl shadow-sm card-hover relative overflow-hidden group">
                 <div class="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-blue-400 to-blue-600"></div>
                 <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Saham</p>
-                        <h3 class="text-3xl font-extrabold text-gray-800" id="total-saham">0</h3>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Total Saham</p>
+                        <div class="text-4xl font-black text-gray-800 tracking-tight" id="total-saham">0</div>
+                        <p class="text-xs text-gray-400 mt-2 font-medium">Terdaftar di Database</p>
                     </div>
-                    <div class="p-2 bg-blue-50 rounded-lg text-blue-600 group-hover:scale-110 transition-transform">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-3 bg-blue-50 rounded-xl text-blue-600 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4">
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z">
                             </path>
                         </svg>
                     </div>
@@ -106,53 +177,47 @@
             </div>
 
             <!-- Market Breadth Card -->
-            <div
-                class="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 relative overflow-hidden group">
-                <div class="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-teal-400 to-teal-600"></div>
+            <div class="bg-glass p-6 rounded-2xl shadow-sm card-hover relative overflow-hidden group">
+                <div class="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-green-400 to-red-500"></div>
                 <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Market Breadth (D1)</p>
-                        <div class="flex items-baseline gap-2">
-                            <span class="text-2xl font-bold text-green-600 flex items-center gap-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                        d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                                </svg>
-                                <span id="breadth-green">0</span>
-                            </span>
-                            <span class="text-gray-300 text-xl">/</span>
-                            <span class="text-2xl font-bold text-red-600 flex items-center gap-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                        d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                                </svg>
-                                <span id="breadth-red">0</span>
-                            </span>
+                    <div class="w-full">
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Market Breadth (H1)</p>
+                        <div class="flex items-end gap-4">
+                            <div>
+                                <span class="text-3xl font-black text-green-600" id="breadth-green">0</span>
+                                <span class="text-xs font-bold text-green-600/70 uppercase ml-1">Naik</span>
+                            </div>
+                            <div class="h-8 w-px bg-gray-200"></div>
+                            <div>
+                                <span class="text-3xl font-black text-red-500" id="breadth-red">0</span>
+                                <span class="text-xs font-bold text-red-500/70 uppercase ml-1">Turun</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="p-2 bg-teal-50 rounded-lg text-teal-600 group-hover:scale-110 transition-transform">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3">
-                            </path>
-                        </svg>
                     </div>
                 </div>
             </div>
 
             <!-- Top UW Streak Card -->
-            <div
-                class="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 relative overflow-hidden group">
+            <div class="bg-glass p-6 rounded-2xl shadow-sm card-hover relative overflow-hidden group cursor-pointer"
+                onclick="openTopUWModal()">
                 <div class="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-purple-400 to-purple-600"></div>
                 <div class="flex justify-between items-start">
                     <div class="overflow-hidden">
-                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Top UW (6-Day Streak)
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Top UW (6-Day Streak)
                         </p>
-                        <div class="text-2xl font-extrabold text-purple-700 truncate" id="top-uw-streak">-</div>
+                        <div class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600 truncate"
+                            id="top-uw-streak">-</div>
+                        <p class="text-xs text-purple-400 mt-2 font-medium flex items-center gap-1">
+                            <span>Klik untuk detail</span>
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </p>
                     </div>
                     <div
-                        class="p-2 bg-purple-50 rounded-lg text-purple-600 group-hover:scale-110 transition-transform flex-shrink-0">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="p-3 bg-purple-50 rounded-xl text-purple-600 group-hover:scale-110 transition-transform flex-shrink-0">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
@@ -161,44 +226,42 @@
             </div>
         </div>
 
-        <div class="mb-6 flex justify-end">
-            <button onclick="openTopUWModal()"
-                class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded shadow flex items-center gap-2 transition">
-                <span>🏆</span> Lihat Top Underwriter Leaderboard
-            </button>
-        </div>
-
-        <div class="bg-white shadow-sm rounded-xl overflow-hidden mb-8 border border-gray-100">
+        <!-- Main Table Section -->
+        <div class="bg-glass rounded-3xl shadow-2xl overflow-hidden border border-white/50">
             <div
-                class="px-6 py-5 border-b border-gray-100 flex flex-col md:flex-row justify-between md:items-center gap-4 bg-gray-50/50">
-                <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                        </path>
-                    </svg>
-                    Track Record Saham IPO
+                class="px-8 py-6 border-b border-gray-100/50 flex flex-col md:flex-row justify-between md:items-center gap-4 bg-white/40">
+                <h3 class="text-xl font-bold text-gray-800 flex items-center gap-3">
+                    <div class="p-2 bg-blue-100 rounded-lg text-blue-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    Track Record
                 </h3>
-                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+
+                <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
                     <!-- Search Input -->
-                    <div class="relative w-full md:w-64">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="relative w-full md:w-72 group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400 group-focus-within:text-blue-600 transition-colors"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                         </div>
                         <input type="text" id="searchBox" onkeyup="handleSearch()" placeholder="Cari Kode Saham..."
-                            class="pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full transition-shadow shadow-sm">
+                            class="pl-11 pr-4 py-3 bg-white border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 rounded-xl text-sm w-full transition-all shadow-sm hover:shadow-md text-gray-800 font-medium placeholder-gray-400">
                     </div>
 
                     <!-- UW Dropdown -->
-                    <div class="relative w-full md:w-48">
+                    <div class="relative w-full md:w-56">
                         <select id="uwFilter" onchange="loadTablePage(1)"
-                            class="appearance-none pl-4 pr-10 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full bg-white transition-shadow shadow-sm cursor-pointer">
+                            class="appearance-none pl-5 pr-10 py-3 bg-white border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 rounded-xl text-sm w-full transition-all shadow-sm hover:shadow-md cursor-pointer text-gray-800 font-medium">
                             <option value="">Semua Underwriter</option>
                         </select>
-                        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M19 9l-7 7-7-7"></path>
@@ -207,36 +270,33 @@
                     </div>
                 </div>
             </div>
+
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-xs text-gray-500 uppercase bg-gray-50/50 border-b border-gray-100">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                                Kode</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tgl
-                                Listing</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">UW
-                            </th>
-                            <th
-                                class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider bg-gray-100">
-                                D1</th>
-                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">
-                                D2</th>
-                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">
-                                D3</th>
-                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">
-                                D4</th>
-                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">
-                                D5</th>
-                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">
-                                D6</th>
-                            <th
-                                class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider bg-gray-50">
-                                D7</th>
+                            <th scope="col" class="px-8 py-4 font-semibold tracking-wider">Kode</th>
+                            <th scope="col" class="px-8 py-4 font-semibold tracking-wider">IPO Date</th>
+                            <th scope="col" class="px-8 py-4 font-semibold tracking-wider">Underwriter</th>
+                            <th scope="col" class="px-8 py-4 text-center font-semibold tracking-wider">H1 %</th>
+                            <th scope="col" class="px-8 py-4 text-center font-semibold tracking-wider">H2 %</th>
+                            <th scope="col" class="px-8 py-4 text-center font-semibold tracking-wider">H3 %</th>
+                            <th scope="col" class="px-8 py-4 text-center font-semibold tracking-wider">H4 %</th>
+                            <th scope="col" class="px-8 py-4 text-center font-semibold tracking-wider">H5 %</th>
+                            <th scope="col" class="px-8 py-4 text-center font-semibold tracking-wider">H6 %</th>
+                            <th scope="col" class="px-8 py-4 text-center font-semibold tracking-wider">H7 %</th>
                         </tr>
                     </thead>
-                    <tbody id="table-body" class="bg-white divide-y divide-gray-200 text-sm"></tbody>
+                    <tbody id="table-body" class="divide-y divide-gray-100/50">
+                        <!-- Data Rendered Here -->
+                    </tbody>
                 </table>
+            </div>
+
+            <!-- Pagination Container -->
+            <div id="pagination-container"
+                class="px-8 py-5 border-t border-gray-100/50 bg-white/40 flex items-center justify-between hidden">
+                <!-- Controls injected by JS -->
             </div>
         </div>
     </div>
