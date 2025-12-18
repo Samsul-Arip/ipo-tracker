@@ -282,5 +282,21 @@ window.handleLogout = handleLogout;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    // Check admin visibility
+    const urlParams = new URLSearchParams(window.location.search);
+    const adminParam = urlParams.get('admin');
+
+    // If ?admin=1 in URL, enable admin and save to localStorage
+    if (adminParam === '1' || adminParam === 'true') {
+        localStorage.setItem('stockinsight_admin_enabled', 'true');
+    }
+
+    // Show/hide admin button based on localStorage
+    const isAdminEnabled = localStorage.getItem('stockinsight_admin_enabled') === 'true';
+    const adminButton = document.getElementById('admin-btn');
+    if (adminButton) {
+        adminButton.style.display = isAdminEnabled ? 'block' : 'none';
+    }
+
     refreshData();
 });

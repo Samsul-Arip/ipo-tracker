@@ -59,8 +59,9 @@
                 <div class="flex items-center space-x-2 md:space-x-4">
                     <button onclick="showPage('user')"
                         class="text-gray-600 hover:text-blue-600 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-semibold transition-colors hover:bg-blue-50">Dashboard</button>
-                    <button onclick="showPage('admin')"
-                        class="bg-gray-900 text-white px-3 py-1.5 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">Admin</button>
+                    <button id="admin-btn" onclick="showPage('admin')"
+                        class="bg-gray-900 text-white px-3 py-1.5 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        style="display: none;">Admin</button>
                 </div>
             </div>
         </div>
