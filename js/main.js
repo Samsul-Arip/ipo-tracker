@@ -1,6 +1,8 @@
+console.log("Main.js loading...");
 import { fetchGlobalStocks, fetchStocks, fetchAdminStocks, checkDuplicateStock, upsertStock, deleteStockById } from './services/api.js';
-import { showLoading, renderTableRows, renderPaginationControls, renderAdminTableRows, renderAdminPaginationControls, updateDashboardStats, renderTopUWSection, populateUWFilter, openTopUWModal, closeTopUWModal } from './ui/renderers.js';
+import { showLoading, renderTableRows, renderPaginationControls, renderAdminTableRows, renderAdminPaginationControls, updateDashboardStats, renderTopUWSection, populateUWFilter, openTopUWModal, closeTopUWModal, openUWDetailModal, closeUWDetailModal } from './ui/renderers.js';
 import { showToast } from './ui/toast.js';
+import { login, logout, getUser } from './auth.js';
 
 // --- STATE ---
 let globalStocks = [];
@@ -120,22 +122,49 @@ function cancelEdit() {
     document.getElementById('btn-cancel').classList.add('hidden');
 }
 
-function showPage(pageId) {
-    if (pageId === 'admin') {
-        const password = prompt("Masukkan Password Admin:");
-        if (password !== "@Saham123") {
-            alert("Password Salah! Akses ditolak.");
-            return;
+async function showPage(pageId) {
+    try {
+        if (pageId === 'admin') {
+            const user = await getUser();
+            if (!user) {
+                showLoginModal();
+                return;
+            }
         }
+
+        document.getElementById('user-page').classList.add('hidden');
+        document.getElementById('admin-page').classList.add('hidden');
+        document.getElementById(pageId + '-page').classList.remove('hidden');
+
+        if (pageId === 'user') refreshData();
+        if (pageId === 'admin') {
+            loadAdminTablePage(1);
+        }
+    } catch (error) {
+        console.error("Error in showPage:", error);
+        alert("Terjadi kesalahan saat memuat halaman: " + error.message);
     }
+}
 
-    document.getElementById('user-page').classList.add('hidden');
-    document.getElementById('admin-page').classList.add('hidden');
-    document.getElementById(pageId + '-page').classList.remove('hidden');
+function showLoginModal() {
+    document.getElementById('login-modal').classList.remove('hidden');
+    document.getElementById('login-modal').classList.add('flex');
+}
 
-    if (pageId === 'user') refreshData();
-    if (pageId === 'admin') {
-        loadAdminTablePage(1);
+function closeLoginModal() {
+    document.getElementById('login-modal').classList.add('hidden');
+    document.getElementById('login-modal').classList.remove('flex');
+    document.getElementById('login-form').reset();
+}
+
+async function handleLogout() {
+    try {
+        await logout();
+        showToast("Logout berhasil", "success");
+        showPage('user');
+    } catch (error) {
+        console.error("Logout error:", error);
+        showToast("Gagal logout", "error");
     }
 }
 
@@ -157,6 +186,31 @@ window.handleAdminSearch = function () {
         loadAdminTablePage(1);
     }, 500);
 };
+
+// Login Form Submit
+document.getElementById('login-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const btn = document.getElementById('btn-login');
+    const originalText = btn.innerText;
+    btn.innerText = "Login...";
+    btn.disabled = true;
+
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    try {
+        await login(email, password);
+        closeLoginModal();
+        showToast("Login berhasil!", "success");
+        showPage('admin');
+    } catch (error) {
+        console.error("Login error:", error);
+        showToast("Login gagal: " + error.message, "error");
+    } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }
+});
 
 // Form Submit
 document.getElementById('inputForm').addEventListener('submit', async function (e) {
@@ -221,6 +275,10 @@ window.deleteStock = handleDeleteStock;
 window.cancelEdit = cancelEdit;
 window.openTopUWModal = () => openTopUWModal(globalStocks);
 window.closeTopUWModal = closeTopUWModal;
+window.openUWDetailModal = (uwName) => openUWDetailModal(uwName, globalStocks);
+window.closeUWDetailModal = closeUWDetailModal;
+window.closeLoginModal = closeLoginModal;
+window.handleLogout = handleLogout;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {

@@ -261,7 +261,7 @@ export function renderTopUWSection(globalStocks) {
         const wrColor = item.avg >= 80 ? "text-green-600" : "text-red-600";
 
         grid.innerHTML += `
-            <div class="bg-white/60 backdrop-blur-sm border border-white/60 rounded-xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 flex items-center justify-between group">
+            <div class="bg-white/60 backdrop-blur-sm border border-white/60 rounded-xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 flex items-center justify-between group cursor-pointer" onclick="window.openUWDetailModal('${item.uw}')">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full ${rankColor} flex items-center justify-center font-bold shadow-sm">
                         ${rank}
@@ -330,7 +330,7 @@ export function openTopUWModal(globalStocks) {
         const badgeBg = item.avg >= 80 ? "bg-green-600" : "bg-red-600";
 
         listEl.innerHTML += `
-        <div class="bg-white rounded-lg shadow-sm p-4 flex items-center justify-between hover:shadow-md transition-shadow ${borderClass}">
+        <div class="bg-white rounded-lg shadow-sm p-4 flex items-center justify-between hover:shadow-md transition-shadow ${borderClass} cursor-pointer" onclick="window.openUWDetailModal('${item.uw}')">
             <div class="flex items-center gap-4">
                 <div class="flex-shrink-0">${rankBadge}</div>
                 <div>
@@ -357,4 +357,58 @@ export function openTopUWModal(globalStocks) {
 export function closeTopUWModal() {
     document.getElementById('top-uw-modal').classList.add('hidden');
     document.getElementById('top-uw-modal').classList.remove('flex');
+}
+
+export function openUWDetailModal(uwName, globalStocks) {
+    // Close top UW modal first if open
+    closeTopUWModal();
+
+    document.getElementById('uw-detail-modal').classList.remove('hidden');
+    document.getElementById('uw-detail-modal').classList.add('flex');
+    document.getElementById('uw-detail-name').innerText = uwName;
+
+    // Filter stocks by this UW
+    const stocks = globalStocks.filter(s => s.uw === uwName);
+
+    // Sort by date descending (newest first)
+    stocks.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    const listEl = document.getElementById('uw-detail-list');
+    listEl.innerHTML = '';
+
+    if (stocks.length === 0) {
+        listEl.innerHTML = `
+            <tr>
+                <td colspan="5" class="px-6 py-8 text-center text-gray-500 italic">Tidak ada data saham untuk underwriter ini.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    stocks.forEach(stock => {
+        const d1Class = stock.d1 > 0 ? 'text-green-600 font-bold' : stock.d1 < 0 ? 'text-red-600 font-bold' : 'text-yellow-600';
+        const d2Class = stock.d2 > 0 ? 'text-green-600 font-bold' : stock.d2 < 0 ? 'text-red-600 font-bold' : 'text-yellow-600';
+        const d3Class = stock.d3 > 0 ? 'text-green-600 font-bold' : stock.d3 < 0 ? 'text-red-600 font-bold' : 'text-yellow-600';
+
+        const formatPct = (val) => {
+            const num = parseFloat(val);
+            if (isNaN(num)) return '-';
+            return (num > 0 ? '+' : '') + num + '%';
+        };
+
+        listEl.innerHTML += `
+            <tr class="hover:bg-gray-50 border-b border-gray-100">
+                <td class="px-6 py-3 font-bold text-gray-800">${stock.code}</td>
+                <td class="px-6 py-3 text-gray-600">${stock.date}</td>
+                <td class="px-6 py-3 text-center ${d1Class}">${formatPct(stock.d1)}</td>
+                <td class="px-6 py-3 text-center ${d2Class}">${formatPct(stock.d2)}</td>
+                <td class="px-6 py-3 text-center ${d3Class}">${formatPct(stock.d3)}</td>
+            </tr>
+        `;
+    });
+}
+
+export function closeUWDetailModal() {
+    document.getElementById('uw-detail-modal').classList.add('hidden');
+    document.getElementById('uw-detail-modal').classList.remove('flex');
 }
