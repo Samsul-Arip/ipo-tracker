@@ -12,6 +12,14 @@ export function formatPercent(value) {
     return (num > 0 ? "+" : "") + num + "%";
 }
 
+export function formatRupiah(value) {
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+    }).format(value);
+}
+
 export function getUWBadgeClass(uw, globalStocks) {
     // Note: This requires globalStocks to be passed in, or we need to calculate stats elsewhere.
     // For now, let's assume we pass the stats map or the full list.
