@@ -335,14 +335,81 @@ async function showPage(pageId) {
         }
 
         // Hide all pages
-        document.getElementById('user-page').classList.add('hidden');
-        document.getElementById('admin-page').classList.add('hidden');
-        document.getElementById('account-page').classList.add('hidden');
-        document.getElementById('profit-page').classList.add('hidden');
+        const pages = ['user', 'admin', 'account', 'profit'];
+        pages.forEach(p => {
+            const el = document.getElementById(p + '-page');
+            if (el) el.classList.add('hidden');
+        });
 
         // Show target page
-        document.getElementById(pageId + '-page').classList.remove('hidden');
+        const target = document.getElementById(pageId + '-page');
+        if (target) target.classList.remove('hidden');
 
+        // Update URL
+        const url = new URL(window.location);
+        url.searchParams.set('page', pageId);
+
+        // Preserve admin param if present
+        const currentParams = new URLSearchParams(window.location.search);
+        if (currentParams.get('admin') === '1') {
+            url.searchParams.set('admin', '1');
+        }
+
+        window.history.pushState({ page: pageId }, '', url);
+
+        // Check Admin Param for Button Visibility (Dynamic Update)
+        const hasAdminParam = url.searchParams.get('admin') === '1';
+        const displayStyle = hasAdminParam ? 'block' : 'none';
+
+        const adminButton = document.getElementById('admin-btn');
+        const accountButton = document.getElementById('account-btn');
+        const profitButton = document.getElementById('profit-btn');
+        const logoutButton = document.getElementById('nav-logout-btn');
+
+        if (adminButton) adminButton.style.display = displayStyle;
+        if (accountButton) accountButton.style.display = displayStyle;
+        if (profitButton) profitButton.style.display = displayStyle;
+        if (logoutButton) logoutButton.style.display = displayStyle;
+
+        // Update Button States
+        const btnMap = {
+            'user': 'user-btn',
+            'account': 'account-btn',
+            'profit': 'profit-btn',
+            'admin': 'admin-btn'
+        };
+
+        // Text Buttons (Dashboard, Account, Profit)
+        const commonInactive = "text-gray-600 hover:text-blue-600 bg-transparent hover:bg-blue-50";
+        const commonActive = "bg-blue-100 text-blue-700 shadow-sm";
+
+        Object.keys(btnMap).forEach(key => {
+            const btnId = btnMap[key];
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+
+            if (key === 'admin') {
+                // Special styling for Admin button
+                if (key === pageId) {
+                    btn.classList.add('ring-4', 'ring-gray-200', 'bg-gray-800');
+                    btn.classList.remove('bg-gray-900');
+                } else {
+                    btn.classList.remove('ring-4', 'ring-gray-200', 'bg-gray-800');
+                    btn.classList.add('bg-gray-900');
+                }
+            } else {
+                // Standard Tabs
+                if (key === pageId) {
+                    // Apply Active
+                    btn.className = `px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-bold transition-all transform scale-105 ${commonActive}`;
+                } else {
+                    // Apply Inactive
+                    btn.className = `px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-semibold transition-colors ${commonInactive}`;
+                }
+            }
+        });
+
+        // Load Data
         if (pageId === 'user') refreshData();
         if (pageId === 'admin') loadAdminTablePage(1);
         if (pageId === 'account') loadAccountPage();
@@ -368,8 +435,11 @@ function closeLoginModal() {
 async function handleLogout() {
     try {
         await logout();
+        localStorage.removeItem('stockinsight_admin_enabled'); // Clear session
         showToast("Logout berhasil", "success");
-        showPage('user');
+        setTimeout(() => {
+            window.location.reload(); // Reload to trigger auth check
+        }, 500);
     } catch (error) {
         console.error("Logout error:", error);
         showToast("Gagal logout", "error");
@@ -410,7 +480,18 @@ document.getElementById('login-form').addEventListener('submit', async function 
         await login(email, password);
         closeLoginModal();
         showToast("Login berhasil!", "success");
-        showPage('admin');
+
+        // Enable Admin Mode
+        localStorage.setItem('stockinsight_admin_enabled', 'true');
+
+        // Show Admin Buttons
+        document.getElementById('admin-btn').style.display = 'block';
+        document.getElementById('account-btn').style.display = 'block';
+        document.getElementById('profit-btn').style.display = 'block';
+
+        // Redirect to Dashboard first as requested
+        refreshData();
+        showPage('user');
     } catch (error) {
         console.error("Login error:", error);
         showToast("Login gagal: " + error.message, "error");
@@ -587,18 +668,56 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const adminParam = urlParams.get('admin');
 
-    // If ?admin=1 in URL, enable admin and save to localStorage
-    if (adminParam === '1' || adminParam === 'true') {
-        localStorage.setItem('stockinsight_admin_enabled', 'true');
-    }
-
-    // Show/hide admin button based on localStorage
+    // Show/hide admin button based on localStorage AND URL param
     const isAdminEnabled = localStorage.getItem('stockinsight_admin_enabled') === 'true';
+    const hasAdminParam = adminParam === '1' || adminParam === 'true';
+
     const adminButton = document.getElementById('admin-btn');
-    if (adminButton) {
-        adminButton.style.display = isAdminEnabled ? 'block' : 'none';
+    const accountButton = document.getElementById('account-btn');
+    const profitButton = document.getElementById('profit-btn');
+    const logoutButton = document.getElementById('nav-logout-btn');
+
+    // ONLY show admin tabs if logged in AND ?admin=1 is present
+    const displayStyle = (isAdminEnabled && hasAdminParam) ? 'block' : 'none';
+
+    if (adminButton) adminButton.style.display = displayStyle;
+    if (accountButton) accountButton.style.display = displayStyle;
+    if (profitButton) profitButton.style.display = displayStyle;
+
+    // Logout button uses same rules as other admin buttons
+    if (logoutButton) logoutButton.style.display = displayStyle;
+
+    // AUTH CHECK LOGIC
+    if (hasAdminParam) {
+        if (!isAdminEnabled) {
+            // Admin URL but not logged in? Show modal & Stop
+            const loginModal = document.getElementById('login-modal');
+            if (loginModal) {
+                loginModal.classList.remove('hidden');
+                loginModal.classList.add('flex');
+            }
+            return;
+        }
     }
 
-    refreshData();
+    // Router Logic
+    const pageParam = urlParams.get('page');
+    if (pageParam && pages.includes(pageParam)) {
+        refreshData();
+        showPage(pageParam);
+    } else if (hasAdminParam && isAdminEnabled) {
+        refreshData();
+        showPage('admin');
+    } else {
+        // Default Public Access -> Dashboard
+        refreshData();
+        showPage('user');
+    }
+
+    // Handle Browser Back Button
+    window.addEventListener('popstate', (event) => {
+        const page = event.state?.page || 'user';
+        showPage(page);
+    });
 });
 
