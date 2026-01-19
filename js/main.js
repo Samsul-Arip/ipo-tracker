@@ -347,7 +347,12 @@ async function showPage(pageId) {
 
         // Update URL
         const url = new URL(window.location);
-        url.searchParams.set('page', pageId);
+
+        if (pageId === 'user') {
+            url.searchParams.delete('page');
+        } else {
+            url.searchParams.set('page', pageId);
+        }
 
         // Preserve admin param if present
         const currentParams = new URLSearchParams(window.location.search);
@@ -703,14 +708,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Router Logic
     const pageParam = urlParams.get('page');
     if (pageParam && pages.includes(pageParam)) {
-        refreshData();
         showPage(pageParam);
     } else if (hasAdminParam && isAdminEnabled) {
-        refreshData();
-        showPage('admin');
+        // User requesting admin mode but no specific page -> Default to Dashboard
+        showPage('user');
     } else {
         // Default Public Access -> Dashboard
-        refreshData();
         showPage('user');
     }
 
