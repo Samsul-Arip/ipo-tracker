@@ -35,7 +35,10 @@ async function refreshData() {
 }
 
 let currentAccountPage = 1;
-const ACCOUNT_PAGE_SIZE = 9;
+const ACCOUNT_PAGE_SIZE = 20; // Increased for infinite scroll
+let isLoadingAccounts = false;
+let hasMoreAccounts = true;
+let totalAccountCount = 0;
 
 // Search & Filter
 let accountSearchTimeout;
@@ -44,12 +47,28 @@ window.handleAccountSearch = function () {
     clearTimeout(accountSearchTimeout);
     accountSearchTimeout = setTimeout(() => {
         // Reset to page 1 when searching
-        loadAccountPage(1);
+        currentAccountPage = 1;
+        hasMoreAccounts = true;
+        loadAccountPage(1, false); // false = replace (not append)
     }, 500);
 };
 
-async function loadAccountPage(page = 1) {
-    showLoading(true);
+async function loadAccountPage(page = 1, append = false) {
+    if (isLoadingAccounts) return; // Prevent duplicate requests
+
+    isLoadingAccounts = true;
+    if (!append) showLoading(true);
+
+    // Show loading indicator for append mode
+    const loadingIndicator = document.getElementById('account-loading-indicator');
+    const endIndicator = document.getElementById('account-end-indicator');
+    if (append && loadingIndicator) {
+        loadingIndicator.classList.remove('hidden');
+    }
+    if (endIndicator) {
+        endIndicator.classList.add('hidden');
+    }
+
     currentAccountPage = page;
     try {
         const filterSelect = document.getElementById('deviceUserFilter');
@@ -60,18 +79,26 @@ async function loadAccountPage(page = 1) {
 
         // Fetch Paginated Data
         const { data, count } = await fetchAccounts(page, ACCOUNT_PAGE_SIZE, filterValue, searchQuery);
-        currentAccounts = data; // Keep current page data in state
+        currentAccounts = append ? [...currentAccounts, ...data] : data; // Append or replace
+        totalAccountCount = count;
+
+        // Check if there are more items to load
+        hasMoreAccounts = (page * ACCOUNT_PAGE_SIZE) < count;
 
         // Update Count Badge (Total in DB)
         const countBadge = document.getElementById('total-account-count');
         if (countBadge) countBadge.innerText = count;
 
-        renderAccountList(data);
-        renderAccountPagination(count, page);
+        renderAccountList(data, append);
+
+        // Show end indicator if no more accounts
+        const loadingIndicator = document.getElementById('account-loading-indicator');
+        const endIndicator = document.getElementById('account-end-indicator');
+        if (!hasMoreAccounts && endIndicator) {
+            endIndicator.classList.remove('hidden');
+        }
 
         // Populate Filter Dropdown (Independent of Page)
-        // Only fetch if dropdown is empty (first load) or we want to refresh it.
-        // For simplicity, let's refresh it to catch new devices added.
         if (filterSelect) {
             const currentFilter = filterSelect.value;
             const uniqueDevices = await fetchAccountDevices();
@@ -92,13 +119,22 @@ async function loadAccountPage(page = 1) {
             showToast("Gagal memuat data akun.", "error");
         }
     } finally {
-        showLoading(false);
+        isLoadingAccounts = false;
+        if (!append) showLoading(false);
+
+        // Hide loading indicator
+        const loadingIndicator = document.getElementById('account-loading-indicator');
+        if (loadingIndicator) {
+            loadingIndicator.classList.add('hidden');
+        }
     }
 }
 
 function filterAccounts() {
     // When filtering, reset to page 1 to fetch filtered results from DB
-    loadAccountPage(1);
+    currentAccountPage = 1;
+    hasMoreAccounts = true;
+    loadAccountPage(1, false); // false = replace
 }
 
 function renderAccountPagination(totalItems, currentPage) {
@@ -323,6 +359,35 @@ async function handleDeleteExpense(id) {
     }
 }
 
+// Infinite Scroll for Accounts
+let scrollListener = null;
+
+function setupAccountInfiniteScroll() {
+    // Remove previous listener if exists
+    if (scrollListener) {
+        window.removeEventListener('scroll', scrollListener);
+    }
+
+    // Create new scroll listener
+    scrollListener = function () {
+        // Check if we're on the account page
+        const accountPage = document.getElementById('account-page');
+        if (!accountPage || accountPage.classList.contains('hidden')) return;
+
+        // Check if user scrolled near bottom (within 200px)
+        const scrollPosition = window.innerHeight + window.scrollY;
+        const pageHeight = document.documentElement.scrollHeight;
+
+        if (scrollPosition >= pageHeight - 200) {
+            // Load next page if available and not currently loading
+            if (hasMoreAccounts && !isLoadingAccounts) {
+                loadAccountPage(currentAccountPage + 1, true); // true = append
+            }
+        }
+    };
+
+    window.addEventListener('scroll', scrollListener);
+}
 
 async function showPage(pageId) {
     try {
@@ -417,7 +482,15 @@ async function showPage(pageId) {
         // Load Data
         if (pageId === 'user') refreshData();
         if (pageId === 'admin') loadAdminTablePage(1);
-        if (pageId === 'account') loadAccountPage();
+        if (pageId === 'account') {
+            // Reset infinite scroll state
+            currentAccountPage = 1;
+            hasMoreAccounts = true;
+            loadAccountPage(1, false); // Initial load
+
+            // Setup infinite scroll listener
+            setupAccountInfiniteScroll();
+        }
         if (pageId === 'profit') loadProfitPage();
 
     } catch (error) {

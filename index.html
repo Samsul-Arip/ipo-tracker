@@ -310,9 +310,22 @@
                 <!-- Rendered by JS -->
             </div>
 
-            <!-- Account Pagination -->
-            <div id="account-pagination-container" class="mt-8 flex justify-center items-center gap-2">
-                <!-- Injected by JS -->
+            <!-- Infinite Scroll Loading Indicator -->
+            <div id="account-loading-indicator"
+                class="hidden mt-8 flex justify-center items-center gap-3 text-gray-500">
+                <div class="loader-small"></div>
+                <span class="text-sm font-medium">Memuat akun lainnya...</span>
+            </div>
+
+            <!-- End of list indicator -->
+            <div id="account-end-indicator" class="hidden mt-8 flex justify-center items-center text-gray-400">
+                <div class="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-full">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="text-sm font-medium">Semua akun telah ditampilkan</span>
+                </div>
             </div>
         </div>
     </div>
