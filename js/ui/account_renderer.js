@@ -12,6 +12,13 @@ export function renderAccountList(accounts) {
         return;
     }
 
+    // Sort accounts by entry_number from small to large (1, 2, 3, 4, 5...)
+    const sortedAccounts = [...accounts].sort((a, b) => {
+        const entryA = parseInt(a.entry_number) || 0;
+        const entryB = parseInt(b.entry_number) || 0;
+        return entryA - entryB;
+    });
+
     let tableHtml = `
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">
@@ -29,7 +36,7 @@ export function renderAccountList(accounts) {
                 <tbody class="divide-y divide-gray-100">
     `;
 
-    accounts.forEach(account => {
+    sortedAccounts.forEach(account => {
         tableHtml += `
             <tr class="bg-white hover:bg-gray-50 transition-colors">
                 <td class="px-6 py-4">

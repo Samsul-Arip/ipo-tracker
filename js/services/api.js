@@ -78,7 +78,7 @@ export async function fetchAccounts(page = 1, limit = 9, filterDevice = null, se
         query = query.or(`name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,phone.ilike.%${searchQuery}%`);
     }
 
-    query = query.order('created_at', { ascending: false })
+    query = query.order('entry_number', { ascending: true })
         .range(start, end);
 
     const { data, count, error } = await query;
