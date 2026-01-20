@@ -1,5 +1,5 @@
 console.log("Main.js loading...");
-import { fetchGlobalStocks, fetchStocks, fetchAdminStocks, checkDuplicateStock, upsertStock, deleteStockById, fetchAccounts, fetchAccountDevices, upsertAccount, deleteAccount, fetchProfits, upsertProfit, deleteProfit, fetchExpenses, upsertExpense, deleteExpense } from './services/api.js';
+import { fetchGlobalStocks, fetchStocks, fetchAdminStocks, checkDuplicateStock, upsertStock, deleteStockById, fetchAccounts, fetchAccountDevices, checkDuplicateEmail, upsertAccount, deleteAccount, fetchProfits, upsertProfit, deleteProfit, fetchExpenses, upsertExpense, deleteExpense } from './services/api.js';
 import { showLoading, renderTableRows, renderPaginationControls, renderAdminTableRows, renderAdminPaginationControls, updateDashboardStats, renderTopUWSection, populateUWFilter, openTopUWModal, closeTopUWModal, openUWDetailModal, closeUWDetailModal } from './ui/renderers.js';
 import { renderAccountList } from './ui/account_renderer.js';
 import { renderProfitList, renderExpenseList, renderProfitSummary } from './ui/profit_renderer.js';
@@ -656,8 +656,20 @@ document.getElementById('accountForm').addEventListener('submit', async function
 
         if (id) data.id = id;
 
+        // Check for duplicate email
+        if (data.email) {
+            const isDuplicateEmail = await checkDuplicateEmail(data.email, id);
+            if (isDuplicateEmail) {
+                showToast("Akun dengan email ini sudah ada!", "error");
+                showLoading(false);
+                btn.innerText = originalText;
+                btn.disabled = false;
+                return;
+            }
+        }
+
         await upsertAccount(data);
-        await loadAccountPage();
+        await loadAccountPage(1, false); // Reload from page 1
         closeAccountModal();
         showToast("Akun berhasil disimpan", "success");
     } catch (error) {

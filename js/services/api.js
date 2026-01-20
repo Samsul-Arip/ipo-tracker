@@ -104,6 +104,18 @@ export async function fetchAccountDevices() {
     return unique.sort();
 }
 
+export async function checkDuplicateEmail(email, excludeId = null) {
+    if (!email) return false; // Empty email is allowed
+
+    let query = supabase.from('accounts').select('id, email').ilike('email', email);
+    if (excludeId) {
+        query = query.neq('id', excludeId);
+    }
+    const { data, error } = await query;
+    if (error) throw error;
+    return data && data.length > 0;
+}
+
 export async function upsertAccount(accountData) {
     const { data, error } = await supabase
         .from('accounts')
